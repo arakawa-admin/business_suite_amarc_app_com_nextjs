@@ -1,0 +1,116 @@
+---
+title: "登録する"
+category: "顧客問合せ受付"
+id: "post-inquiry"
+description: "顧客から受け付けた問合せ内容をシステムに登録する手順を説明します。"
+---
+
+<InfoCard title="このページの目的">
+アマルクのフロントで、顧客から受け付けた問合せ情報を、社内で共有・管理するために**新規登録する手順**をまとめています。  
+フロント担当者（受付担当）は、来店・電話・メールなどで受け付けた**営業部に依頼する問い合わせ**を速やかに登録してください。
+</InfoCard>
+
+---
+
+## 1. 顧客問合せ情報登録とは
+
+<StepBox title="概要">
+- 顧客からの依頼・相談内容を記録し、営業部と情報を共有します。  
+- 後続の「進捗管理」「受注情報」「対応記録」と連動する基礎データになります。  
+- 誤りを避けるため、**受付時の情報は正確に記入**する必要があります。
+</StepBox>
+
+<MdxStack>
+<Tip>問合せ情報は **後から編集できます**（営業部が未対応のものに限る）。まずは受付時点で分かる範囲を正しく入力します。</Tip>
+<Warning>
+    登録後は全社員が参照するため、曖昧な表現や略語は避けてください。  
+    ※ 編集権限を持つユーザにだけに表示されます。
+</Warning>
+</MdxStack>
+
+---
+
+## 2. 登録画面の開き方
+
+<StepBox title="手順">
+1. 画面右上の **「＋ 新規登録」** ボタンをクリックします。  
+2. 問合せ登録フォームが表示されます。
+</StepBox>
+
+<MdxImage src="/api/help-image?path=inquiry/post-form.png" width={800} height={420} />
+
+---
+
+## 3. 入力項目の説明
+
+問い合わせ登録フォームには、以下の項目を入力します。
+
+### 基本情報
+
+<StepBox title="登録情報">
+- 受付日<Chip label={"必須"} color="error" sx={{ml: 1}} size="small" />
+- 受付部門<Chip label={"必須"} color="error" sx={{ml: 1}} size="small" />
+- タイトル<Chip label={"必須"} color="error" sx={{ml: 1}} size="small" />
+- 要件<Chip label={"必須"} color="error" sx={{ml: 1}} size="small" />
+- 顧客名<Chip label={"必須"} color="error" sx={{ml: 1}} size="small" />
+- 顧客カナ<Chip label={"必須"} color="error" sx={{ml: 1}} size="small" />
+- 顧客住所<Chip label={"必須"} color="error" sx={{ml: 1}} size="small" />
+- 顧客電話番号<Chip label={"必須"} color="error" sx={{ml: 1}} size="small" />
+- 顧客の社名
+- 顧客の属する部門
+</StepBox>
+
+<Tip>
+文章は **箇条書き形式** が読みやすくおすすめです。
+</Tip>
+
+---
+
+## 4. 入力後の確認ダイアログ
+
+登録ボタンを押すと、システム側で **確認ダイアログ** が表示されます。
+
+<MdxImage src="/api/help-image?path=inquiry/post-confirm.png" width={800} height={420} />
+
+<Warning>
+内容に誤りがある場合は、「キャンセル」を押して編集に戻ってください。
+</Warning>
+
+---
+
+## 5. 登録後の動作
+
+<StepBox title="登録後のシステム動作">
+- 問合せ情報が データベース に保存されます。  
+- 問合せ詳細ページへ自動遷移します。  
+- 「登録完了」が表示されます。  
+- 営業部にメール通知されます。  
+</StepBox>
+
+<Tip>
+進捗情報（ステータス管理）は **引き続き「進捗情報(営業部)」ページから追加** できます。
+</Tip>
+
+---
+
+## 6. 注意点
+
+<Danger>
+登録後は全社員が参照します。  
+入力ミスは **担当者アサインの遅延や誤案内** に直結するため注意してください。
+</Danger>
+
+---
+
+## 7. 関連ページ
+
+<MdxButton href="/help/post-inquiry-progress">進捗情報の登録</MdxButton>
+<MdxButton href="/help/post-inquiry-arrangement">契約情報の登録</MdxButton>
+<MdxButton href="/help/post-inquiry-result">対応結果情報の登録</MdxButton>
+
+---
+
+<InfoCard title="これで完了です！">
+顧客問合せ情報は、業務フローの入口となる重要なデータです。  
+正しく登録し、後続の対応をスムーズに進めましょう。
+</InfoCard>

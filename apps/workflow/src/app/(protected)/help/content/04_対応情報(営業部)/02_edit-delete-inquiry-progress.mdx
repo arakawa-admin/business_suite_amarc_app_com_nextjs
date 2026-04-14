@@ -1,0 +1,169 @@
+---
+title: "編集・削除する"
+category: "進捗情報(営業部)"
+id: edit-delete-inquiry-progress
+description: "登録済みの進捗情報を編集・削除する手順をまとめたガイドです。"
+---
+
+<InfoCard title="このページの目的">
+このページでは、登録済みの「進捗情報（下見・見積り・契約・不成立）」を  
+**編集（訂正・更新）** または **削除（取り消し）** する方法を説明します。
+
+どちらの操作も、顧客問合せの詳細画面から実行できます。
+
+<MdxImage src="/api/help-image?path=inquiry-progress/detail.png" width={600} height={420} />
+
+</InfoCard>
+
+---
+
+## 1. 編集・削除が必要になる場面
+
+<MdxStack>
+<InfoCard title="編集が必要なケース">
+- 誤ったステータスを選択してしまった  
+- 担当者の変更が発生した  
+- 対応日を調整する必要がある  
+- 詳細説明を追記・修正したい
+</InfoCard>
+
+<Warning>
+編集可能なのは、投稿者本人且つ、この後に続く「段取り情報」が未登録のものに限ります。
+</Warning>
+
+<Danger>
+削除は **誤登録・重複登録のときのみ** 行ってください。  
+他の進捗に影響する場合があるため、慎重に判断してください。
+</Danger>
+</MdxStack>
+
+---
+
+## 2. 編集・削除ボタンの場所
+
+進捗情報は、以下の場所から編集・削除できます：
+
+<StepBox title="進捗情報の操作ができる画面">
+- **顧客問合せの詳細ページ**  
+</StepBox>
+
+ユーザーが普段見る画面上に、  
+「編集」ボタンと「削除」ボタンが並んで表示されます。
+
+<MdxImage src="/api/help-image?path=inquiry-progress/detail.png" width={600} height={420} />
+
+---
+
+## 3. 進捗情報を編集する
+
+### 編集画面を開く
+
+<StepBox title="手順">
+1. 該当する進捗情報の行にある **「編集」ボタン** を押す  
+2. 編集画面が開く  
+3. 必要な項目を修正し、画面下の **「更新する」** ボタンを押す  
+4. 確認ダイアログで内容を確認し、確定する
+</StepBox>
+
+<MdxImage src="/api/help-image?path=inquiry-progress/edit-form.png" width={800} height={420} />
+
+---
+
+### 編集できる項目
+
+<MdxStack>
+<InfoCard title="ステータス">
+状況の進み具合に応じて「下見 → 見積り → 契約 → 不成立」などへ変更できます。
+</InfoCard>
+
+<InfoCard title="担当者">
+実際に対応する担当者を割り当てます。
+</InfoCard>
+
+<InfoCard title="対応日">
+下見や見積/契約日など、対応した日を設定します。
+</InfoCard>
+
+<InfoCard title="対応状況の詳細">
+顧客とのやり取りや具体的な作業内容を記録できます。
+</InfoCard>
+
+<InfoCard title="顧客ランク ※契約の場合">
+顧客との関係性や重要度を示す指標です。  
+社内判断に利用されるため、正しく選択してください。
+</InfoCard>
+
+<InfoCard title="対応部門 ※契約の場合">
+契約内容に基づき、どの部門が対応するのかを選択します。  
+</InfoCard>
+
+<InfoCard title="支払い方法 ※契約の場合">
+現金払い/振込を切り替えてください。
+</InfoCard>
+
+</MdxStack>
+
+---
+
+## 4. 編集時の確認ダイアログ
+
+変更内容を保存する前に、必ず確認ダイアログが表示されます。
+
+<MdxImage src="/api/help-image?path=inquiry-progress/edit-confirm.png" width={800} height={420} />
+
+<Warning>誤った変更は社内全体に影響するため、必ず確認してから確定してください。</Warning>
+
+---
+
+## 5. 進捗情報を削除する
+
+### 削除するとどうなる？
+
+<MdxStack>
+<Danger>
+削除した進捗情報は元に戻せません。  
+履歴が失われるため、**誤登録・重複登録を消す場合のみ** 利用してください。
+</Danger>
+<Warning>今後の作業に影響があるため、担当者や上長に確認してから削除しましょう。</Warning>
+</MdxStack>
+
+---
+
+### 削除の手順
+
+<StepBox title="削除方法">
+1. 削除したい進捗情報の行にある **「削除」ボタン** を押す  
+2. 確認ダイアログが表示される  
+3. 「削除する」を押すと完全に削除されます  
+4. 完了後、一覧が自動的に更新されます
+</StepBox>
+
+<MdxImage src="/api/help-image?path=inquiry-progress/delete-confirm.png" width={800} height={420} />
+
+---
+
+## 6. 編集・削除後のシステムの動作
+
+<StepBox title="反映内容">
+- 編集 → 最新の状態に更新され、画面に即時反映されます  
+- 削除 → 該当の進捗が一覧から消えます  
+- 問合せ全体のステータス集計にも自動反映されます
+</StepBox>
+
+<Tip>変更後はブラウザを更新しなくても反映されます。</Tip>
+
+---
+
+## 7. 関連ページ
+
+<MdxButton href="/help/post-inquiry">顧客問合せの登録</MdxButton>
+<MdxButton href="/help/post-inquiry-progress">進捗情報の登録</MdxButton>
+<MdxButton href="/help/post-inquiry-arrangement">契約情報の登録</MdxButton>
+<MdxButton href="/help/post-inquiry-result">対応結果情報の登録</MdxButton>
+
+---
+
+<InfoCard title="適切な進捗管理で業務がスムーズに進みます">
+進捗情報は、顧客対応の状況を全体で共有する重要なデータです。  
+正しく編集し、不要なデータは削除して、常に最新の状態を維持しましょう。
+</InfoCard>

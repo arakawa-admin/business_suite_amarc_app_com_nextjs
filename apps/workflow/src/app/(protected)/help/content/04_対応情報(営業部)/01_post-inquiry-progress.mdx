@@ -1,0 +1,163 @@
+---
+title: "登録する"
+category: "進捗情報(営業部)"
+id: post-inquiry-progress
+description: "顧客問合せに対する進捗状況を登録する手順をまとめたガイドです。"
+---
+
+<InfoCard title="このページの目的">
+顧客問合せに対して、**下見・見積り・契約・不成立** の進捗ステータスを登録し、  
+営業部の担当者と問合せを受け付けたアマルク部門で状況を共有する方法を説明します。
+
+進捗情報は業務プロセスの中核となるため、正確かつ迅速な登録が重要です。
+</InfoCard>
+
+---
+
+## 1. 進捗管理の概要
+
+<MdxStack>
+<Tip>進捗登録は **一覧** からワンクリックで行えるため、現場の運用に最適です。</Tip>
+<Warning>ステータスの変更は全社員向けに即時反映されます。誤選択に注意してください。</Warning>
+</MdxStack>
+
+---
+
+## 2. ダッシュボードでの進捗状況
+
+ダッシュボードでは、進捗ステータスごとの件数が可視化されます。
+
+<MdxImage src="/api/help-image?path=inquiry-progress/summary-card.png" width={1280} height={420} />
+
+<StepBox title="表示されるステータス">
+- **下見（例：37件）**  
+- **見積り（例：26件）**  
+- **契約（例：5件）**  
+- **不成立（例：0件）**  
+
+折れ線グラフにより、その月のステータスの増減推移も把握できます。
+</StepBox>
+
+---
+
+## 3. 進捗登録ボタンの場所
+
+進捗登録は以下の2つの一覧に共通して配置されています：
+
+<StepBox title="進捗登録の入口">
+- ダッシュボード内の **「対応中リスト」**  
+- 対応中一覧ページ  
+
+どちらにも、行末に **「＋ 進捗登録」ボタン** が表示されます。
+</StepBox>
+
+<MdxImage src="/api/help-image?path=inquiry-progress/post-button.png" width={400} height={420} />
+
+---
+
+## 4. 進捗登録フォームの開き方
+
+<StepBox title="手順">
+1. 一覧の行末にある **「＋ 進捗登録」** ボタンをクリック  
+2. 進捗登録フォーム画面が開く  
+3. ステータス・担当者・対応日・詳細を入力して登録  
+</StepBox>
+
+---
+
+## 5. 入力項目の説明
+
+以下の項目を入力します。
+
+<MdxStack>
+<InfoCard title="対応日">
+下見や見積提出などを行なった日を入力します。  
+翌月を跨ぐ場合は特に注意が必要です。
+</InfoCard>
+
+<InfoCard title="ステータス">
+- 下見  
+- 見積り  
+- 契約  
+- 不成立  
+
+進捗管理の基準となるため、業務状況に応じて正しく選択してください。
+</InfoCard>
+
+<InfoCard title="担当者">
+実際に対応する担当者を選択します。  
+割り当てを忘れると作業が停滞するため注意してください。
+</InfoCard>
+
+<InfoCard title="対応状況詳細">
+現状の説明や顧客とのやりとりを記録します。  
+後続の対応者にも伝わるよう簡潔に記載してください。
+</InfoCard>
+
+<InfoCard title="添付ファイル">
+見積書や契約書などの画像・PDFファイルが添付可能です。
+</InfoCard>
+
+<InfoCard title="顧客ランク ※契約の場合">
+顧客との関係性や重要度を示す指標です。  
+社内判断に利用されるため、正しく選択してください。
+</InfoCard>
+
+<InfoCard title="対応部門 ※契約の場合">
+契約内容に基づき、どの部門が対応するのかを選択します。  
+</InfoCard>
+
+<InfoCard title="支払い方法 ※契約の場合">
+現金払い/振込を切り替えてください。
+</InfoCard>
+
+<MdxImage src="/api/help-image?path=inquiry-progress/post-form.png" width={800} height={420} />
+
+</MdxStack>
+
+---
+
+## 6. 登録確認ダイアログ
+
+登録ボタンを押すと、確認ダイアログが表示されます。
+
+<MdxImage src="/api/help-image?path=inquiry-progress/post-confirm.png" width={800} height={420} />
+
+<Warning>内容に誤りがある場合は、必ず「キャンセル」で修正してください。</Warning>
+
+---
+
+## 7. 登録後の挙動
+
+<StepBox title="システムの動作">
+- 進捗情報が DB に保存されます。  
+- 顧客問合せの詳細ページへ遷移します。  
+- 画面上に **「進捗状況を登録しました」** が表示されます。  
+- ダッシュボードと一覧のステータス集計が自動更新されます。
+</StepBox>
+
+<Tip>契約ステータスを選択した場合は、続けて「受注情報登録」に進むとスムーズです。</Tip>
+
+---
+
+## 8. 編集・削除について
+
+進捗情報は後から編集・削除が可能です。  
+編集・削除手順については以下を参照してください：
+
+<MdxButton href="/help/edit-delete-inquiry-progress">進捗情報の編集・削除</MdxButton>
+
+---
+
+## 9. 関連リンク
+
+<MdxButton href="/help/post-inquiry">顧客問合せの登録</MdxButton>
+<MdxButton href="/help/post-inquiry-arrangement">契約情報の登録</MdxButton>
+<MdxButton href="/help/post-inquiry-result">対応結果情報の登録</MdxButton>
+
+---
+
+<InfoCard title="進捗登録は業務を前に進めるための重要な作業です">
+正しいステータスと担当者を設定することで、  
+社内全体の作業が連動し、顧客対応の品質が向上します。
+</InfoCard>

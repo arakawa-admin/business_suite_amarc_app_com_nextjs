@@ -1,0 +1,185 @@
+/* -------------------------------------------
+   MDX コンテンツ用スタイルセット（.mdxクラス）
+   Tailwind Reset / MUI CssBaseline 対応済み
+------------------------------------------- */
+
+.mdx {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: #222;
+    word-break: break-word;
+
+    /* 見出し系 -------------------------------------------------- */
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        font-weight: 700;
+        line-height: 1.2;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    h1 {
+        font-size: 2rem;
+        border-bottom: 2px solid #e5e7eb;
+        padding-bottom: 0.3rem;
+    }
+
+    h2 {
+        font-size: 1.6rem;
+        border-left: 4px solid #3b82f6;
+        padding-left: 0.5rem;
+    }
+
+    h3 {
+        font-size: 1.3rem;
+    }
+
+    h4 {
+        font-size: 1.1rem;
+        color: #444;
+    }
+
+    /* 段落 ------------------------------------------------------ */
+
+    // p {
+    //     margin: 0.75rem 0;
+    // }
+
+    /* リスト ----------------------------------------------------- */
+
+    ul,
+    ol {
+        padding-left: 1.6rem;
+        margin: 0.75rem 0;
+    }
+
+    ul {
+        list-style: disc;
+    }
+
+    ol {
+        list-style: decimal;
+    }
+
+    li {
+        margin: 0.35rem 0;
+    }
+
+    li > ul,
+    li > ol {
+        margin-top: 0.4rem;
+    }
+
+    /* 引用 ------------------------------------------------------ */
+
+    blockquote {
+        border-left: 4px solid #60a5fa;
+        padding-left: 1rem;
+        margin: 1rem 0;
+        color: #555;
+        background: #f8fafc;
+    }
+
+    /* コードブロック -------------------------------------------- */
+
+    pre {
+        background: #1e1e1e;
+        color: #f8f8f2;
+        padding: 1rem;
+        border-radius: 6px;
+        overflow-x: auto;
+        margin: 1rem 0;
+    }
+
+    code {
+        background: #f1f5f9;
+        padding: 0.15rem 0.35rem;
+        border-radius: 4px;
+        font-size: 0.9rem;
+    }
+
+    pre code {
+        background: none;
+        padding: 0;
+        font-size: 0.95rem;
+    }
+
+    /* テーブル -------------------------------------------------- */
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 1.5rem 0;
+    }
+
+    th,
+    td {
+        border: 1px solid #e5e7eb;
+        padding: 0.6rem;
+        text-align: left;
+    }
+
+    th {
+        background: #f3f4f6;
+        font-weight: 600;
+    }
+
+    /* 画像 ------------------------------------------------------ */
+
+    img {
+        max-width: 100%;
+        height: auto;
+        margin: 1rem 0;
+        border-radius: 6px;
+    }
+
+    // /* リンク ---------------------------------------------------- */
+
+    // a {
+    //     color: #2563eb;
+    //     text-decoration: underline;
+    // }
+
+    // a:hover {
+    //     color: #1d4ed8;
+    // }
+
+    /* 水平線 ---------------------------------------------------- */
+
+    hr {
+        border: 0;
+        border-top: 1px solid #e5e7eb;
+        margin: 2rem 0;
+    }
+
+    /* 注意・警告ブロック（独自拡張用）-------------------------- */
+
+    .note {
+        background: #ecfdf5;
+        border-left: 4px solid #10b981;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 4px;
+    }
+
+    .warning {
+        background: #fef3c7;
+        border-left: 4px solid #f59e0b;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 4px;
+    }
+
+    .danger {
+        background: #fee2e2;
+        border-left: 4px solid #ef4444;
+        padding: 1rem;
+        margin: 1rem 0;
+        border-radius: 4px;
+    }
+}

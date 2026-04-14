@@ -1,0 +1,143 @@
+---
+title: "編集・削除する"
+category: "顧客問合せ受付"
+id: edit-delete-inquiry
+description: "登録済みの顧客問合せ情報を編集・削除する手順を説明します。"
+---
+
+<InfoCard title="このページの目的">
+このページでは、登録済みの顧客問合せ情報に対して**編集（情報の更新）** と **削除（情報の取り消し）** を行う方法をまとめています。
+
+一覧上の操作アイコンから直接アクセスできます。
+</InfoCard>
+
+---
+
+## 1. 顧客問合せの管理方法
+
+<MdxStack>
+<Tip>編集・削除は、ダッシュボード・一覧画面から**ワンクリック** でアクセスできます。</Tip>
+<Warning>削除操作は取り消しができません。内容をよく確認してから実行してください。</Warning>
+</MdxStack>
+
+---
+
+## 2. 編集・削除ボタンの場所
+
+<StepBox title="各画面に共通して設置されています">
+- **ダッシュボードの最新問合せ一覧**  
+- **顧客問合せ一覧ページ**
+
+どちらにも同じ編集・削除アイコンが表示されます。
+</StepBox>
+
+<MdxImage src="/api/help-image?path=inquiry/edit-delete-button.png" width={400} height={100} />
+
+---
+
+## 3. 顧客問合せの編集
+
+### 編集画面を開く
+
+<StepBox title="手順">
+1. 一覧の行末にある **「編集アイコン」** をクリックします。  
+2. 顧客問合せの編集ページへ遷移します。  
+3. 必要な項目を修正し、画面下部の **「更新する」** ボタンを押します。
+</StepBox>
+
+<MdxImage src="/api/help-image?path=inquiry/edit-form.png" width={800} height={420} />
+
+---
+
+### 編集可能な項目
+
+<InfoCard title="主に変更できる項目">
+- 受付日<Chip label={"必須"} color="error" sx={{ml: 1}} size="small" />
+- 受付部門<Chip label={"必須"} color="error" sx={{ml: 1}} size="small" />
+- タイトル<Chip label={"必須"} color="error" sx={{ml: 1}} size="small" />
+- 要件<Chip label={"必須"} color="error" sx={{ml: 1}} size="small" />
+- 顧客名<Chip label={"必須"} color="error" sx={{ml: 1}} size="small" />
+- 顧客カナ<Chip label={"必須"} color="error" sx={{ml: 1}} size="small" />
+- 顧客住所<Chip label={"必須"} color="error" sx={{ml: 1}} size="small" />
+- 顧客電話番号<Chip label={"必須"} color="error" sx={{ml: 1}} size="small" />
+- 顧客の社名
+- 顧客の属する部門
+</InfoCard>
+
+<Warning>
+編集可能なのは、投稿者本人且つ営業部が未対応のものに限ります。
+</Warning>
+
+<Tip>変更内容は即時反映され、全社員が参照できます。</Tip>
+
+---
+
+### 更新時の確認ダイアログ
+
+更新ボタンを押すと、**確認ダイアログ** が表示されます。
+
+<MdxImage src="/api/help-image?path=inquiry/edit-confirm.png" width={800} height={420} />
+
+<Warning>
+編集内容に間違いがある場合は「キャンセル」を押して修正してください。
+</Warning>
+
+---
+
+## 4. 顧客問合せの削除
+
+### 削除画面を開く
+
+<StepBox title="手順">
+1. 一覧の行末にある **「削除アイコン」** をクリックします。  
+2. 削除確認ダイアログが表示されます。  
+3. 「削除する」を押すと完全に削除されます。
+</StepBox>
+
+<MdxImage src="/api/help-image?path=inquiry/delete-confirm.png" width={800} height={420} />
+
+---
+
+### 削除時の注意点
+
+<MdxStack>
+<Warning>削除された問合せ情報は元に戻せません。</Warning>
+</MdxStack>
+
+---
+
+## 5. ダッシュボードからの編集・削除
+
+<StepBox title="ダッシュボードにも  を配置">
+- ダッシュボードの「最新の問合せ」一覧にも**同じ編集・削除アイコンを搭載** しています。  
+- ここから直接、問合せの編集・削除が可能です。  
+</StepBox>
+
+---
+
+## 6. 編集・削除後の挙動
+
+<StepBox title="システムの動作">
+- 編集 → 該当問合せの詳細ページへ遷移し、更新内容が反映されます。  
+- 削除 → 一覧ページへ戻り、削除済みが反映されます。  
+- 操作完了後、“更新しました / 削除しました” が表示されます。
+</StepBox>
+
+<Tip>一覧は自動的に最新状態へ更新されます。</Tip>
+
+---
+
+## 7. 関連リンク
+
+<MdxButton href="/help/post-inquiry">顧客問合せの登録</MdxButton>
+<MdxButton href="/help/post-inquiry-progress">進捗情報の登録</MdxButton>
+<MdxButton href="/help/post-inquiry-arrangement">契約情報の登録</MdxButton>
+<MdxButton href="/help/post-inquiry-result">対応結果情報の登録</MdxButton>
+
+---
+
+<InfoCard title="これで編集・削除の説明は終了です！">
+問い合わせ情報は業務全体の入口となるデータです。  
+誤りがあれば早期に修正し、不要データは削除することで  
+常に正しい情報が社内で共有されます。
+</InfoCard>

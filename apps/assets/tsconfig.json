@@ -1,0 +1,24 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"],
+      "@ui/*": ["../../packages/ui/*"],
+      "@contexts/*": ["../../packages/contexts/*"],
+      "@schemas/*": ["../../packages/schemas/*"],
+      "@supabase-shared/*": ["../../packages/supabase-shared/*"],
+      "@types/*": ["../../packages/db-types/*"]
+    }
+  },
+  "include": [
+    "next-env.d.ts",
+    "src",
+    "../../packages/ui/src",
+    "../../packages/supabase-shared/src",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
