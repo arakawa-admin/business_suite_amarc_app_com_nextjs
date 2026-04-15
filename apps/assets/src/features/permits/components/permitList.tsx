@@ -12,14 +12,19 @@ import {
 } from "@mui/material";
 import { DataGrid, type GridColDef } from "@mui/x-data-grid";
 import { jaJP } from '@mui/x-data-grid/locales';
-// import { format } from "date-fns";
-// import { ja } from "date-fns/locale";
+
+import { PermitListFilter } from "./permitListFilter";
 
 import type { PermitListRow } from "../types/permitTypes";
 import AssetsBreadcrumbs from "@/components/common/layout/AssetsBreadcrumbs";
 
+type CategoryOption = {
+    id: string;
+    name: string;
+};
 type Props = {
     rows: PermitListRow[];
+    categoryOptions: CategoryOption[];
 };
 
 function renderStatusChip(
@@ -41,8 +46,9 @@ function renderStatusChip(
 
 const TITLE = "許認可一覧"
 
-export function PermitList({ rows }: Props) {
+export function PermitList({ rows, categoryOptions }: Props) {
     const router = useRouter();
+
     const columns: GridColDef<PermitListRow>[] = [
         {
             field: "category_name",
@@ -182,7 +188,9 @@ export function PermitList({ rows }: Props) {
                 </Button>
             </Stack>
 
-            {/* TODO カテゴリのボタン並べてクリックでフィルター */}
+            <PermitListFilter
+                categoryOptions={categoryOptions}
+            />
 
             <Paper variant="outlined" sx={{ p: 1 }}>
                 <DataGrid

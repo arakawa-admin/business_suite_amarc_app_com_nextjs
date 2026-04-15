@@ -10,7 +10,6 @@ import {
     Container,
     Divider,
     Grid,
-    Paper,
     Stack,
     Typography,
 } from "@mui/material";

@@ -7,6 +7,7 @@
       "@contexts/*": ["../../packages/contexts/*"],
       "@schemas/*": ["../../packages/schemas/*"],
       "@supabase-shared/*": ["../../packages/supabase-shared/*"],
+      "@cloudflare/*": ["../../packages/cloudflare/*"],
       "@types/*": ["../../packages/db-types/*"]
     }
   },

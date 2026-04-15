@@ -32,6 +32,9 @@ import SelectDateField from "@ui/form/SelectDateField";
 import AutocompleteField from "@ui/form/AutocompleteField";
 import SelectField from "@ui/form/SelectField";
 
+import { AttachmentUploader } from "@/features/attachments/components/AttachmentUploader";
+import { PermitAttachmentFormValues } from "@/features/permits/schemas/permitSchema";
+
 type Props = {
     mode: "create" | "edit";
     editId?: string;
@@ -74,19 +77,23 @@ export function PermitForm({
 
     const [reminderStepMonths, setReminderStepMonths] = useState(0);
     const [alertLeadMonths, setAlertLeadMonths] = useState(0);
+    const [attachments, setAttachments] = useState<PermitAttachmentFormValues[]>([]);
 
     const handleSubmit = methods.handleSubmit(async (values) => {
         try {
             if (isEdit) {
                 if (!editId) throw new Error("editId がありません。");
-                await permitEditAction(values, editId);
+                await permitEditAction({ ...values, attachments }, editId);
                 toast.success("許認可を更新しました");
                 setTimeout(() => {
                     router.replace(`/permits/${editId}`);
                     router.refresh();
                 }, 800);
             } else {
-                const createdPermit = await permitCreateAction(values);
+                const createdPermit = await permitCreateAction({
+                    ...values,
+                    attachments,
+                });
                 toast.success("許認可を新規登録しました");
                 setTimeout(() => {
                     router.replace(`/permits/${createdPermit.id}`);
@@ -222,7 +229,7 @@ export function PermitForm({
                                                 追加ルール
                                             </Typography>
                                             <Alert severity="info">
-                                                1つ前の有効期限を基準日として、追加ルールに従って有効期限を追加します。
+                                                1つ目の場合は”発行日”、2つ目以降の場合は1つ前の有効期限を基準日として、追加ルールに従って有効期限を追加します。
                                             </Alert>
 
                                             <Stack spacing={1} direction="row" alignItems="center">
@@ -311,6 +318,19 @@ export function PermitForm({
                                         </Box>
                                     </Stack>
                                 </Stack>
+                            </Paper>
+                        </Box>
+
+                        <Box>
+                            <Typography variant="body2" sx={{ p: 1, color: "text.secondary" }}>
+                                添付ファイル
+                            </Typography>
+                            <Paper variant="outlined" sx={{ p: 3 }}>
+                                <AttachmentUploader
+                                    value={attachments}
+                                    onChange={setAttachments}
+                                    // label="添付ファイル"
+                                />
                             </Paper>
                         </Box>
 

@@ -7,6 +7,9 @@ import {
     replacePermitReminders,
     updatePermit,
 } from "../repositories/permitRepository";
+import { createAttachmentLinks } from "../../attachments/repositories/attachmentLinkRepository";
+import { markAttachmentsLinked } from "@/features/attachments/repositories/attachmentRepository";
+
 import {
     createPermitSchema,
     type PermitSubmitValues,
@@ -16,6 +19,7 @@ import {
     mapPermitSubmitValuesToReplaceRemindersInput,
     mapPermitSubmitValuesToUpdateInput,
 } from "../mappers/permitMappers";
+
 
 export async function permitCreateAction(
     values: PermitSubmitValues,
@@ -34,8 +38,22 @@ export async function permitCreateAction(
         permit.id,
         parsed.data,
     );
-
     await createPermitReminders(permit.id, reminderInput.reminders);
+
+
+    if (parsed.data.attachments.length > 0) {
+        await createAttachmentLinks(
+            parsed.data.attachments.map((item, index) => ({
+                attachmentId: item.attachmentId,
+                targetType: "permit",
+                targetId: permit.id,
+                attachmentRole: "general",
+                sortOrder: index+1,
+            })),
+        );
+        
+        await markAttachmentsLinked(parsed.data.attachments.map((item) => item.attachmentId));
+    }
 
     revalidatePath("/permits");
     return permit;
@@ -59,6 +77,18 @@ export async function permitEditAction(
     await replacePermitReminders(
         mapPermitSubmitValuesToReplaceRemindersInput(permitId, parsed.data),
     );
+
+    if (parsed.data.attachments.length > 0) {
+        await createAttachmentLinks(
+            parsed.data.attachments.map((item, index) => ({
+                attachmentId: item.attachmentId,
+                targetType: "permit",
+                targetId: permitId,
+                attachmentRole: "general",
+                sortOrder: index+1,
+            })),
+        );
+    }
 
     revalidatePath("/permits");
     revalidatePath(`/permits/${permitId}`);

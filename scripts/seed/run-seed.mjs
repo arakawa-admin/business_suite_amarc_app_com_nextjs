@@ -29,21 +29,21 @@ if ((projectRef) !== answer.trim()) {
 (async () => {
   try {
     // --- common
-    // await seedMasterUsers();
-    // await seedMasterCompanys();
-    // await seedMasterDepartments();
-    // await seedUserDepartments();
+    await seedMasterUsers();
+    await seedMasterCompanys();
+    await seedMasterDepartments();
+    await seedUserDepartments();
 
-    // // --- approval
-    // await seedMasterStatus();
-    // await seedMasterDepartmentApproverAndReviewers();
+    // --- approval
+    await seedMasterStatus();
+    await seedMasterDepartmentApproverAndReviewers();
 
-    // // --- apply
-    // await seedMasterEmployTypes();
-    // await seedMasterStaffOptions();
-    // await seedApplyMasterStatus();
-    // await seedApplyForms();
-    // await seedMasterFormApproverAndViewers();
+    // --- apply
+    await seedMasterEmployTypes();
+    await seedMasterStaffOptions();
+    await seedApplyMasterStatus();
+    await seedApplyForms();
+    await seedMasterFormApproverAndViewers();
 
     // --- assets
     await seedMasterPermitCategories();

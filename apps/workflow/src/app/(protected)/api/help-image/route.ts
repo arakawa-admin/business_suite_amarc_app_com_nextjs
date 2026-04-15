@@ -2,11 +2,10 @@ import { createClient } from "@supabase/supabase-js";
 import { NextResponse } from "next/server";
 
 const supabase = createClient(
-    // process.env.SUPABASE_URL!,
-    "https://ebjlewzdbuwbzlmjlkvi.supabase.co",
-    // process.env.SUPABASE_SERVICE_ROLE_KEY!
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViamxld3pkYnV3YnpsbWpsa3ZpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NTE1NTA2NywiZXhwIjoyMDgwNzMxMDY3fQ.IlfKX12V1vo7loGFu23DdTDRyETmb-5j6C_KiPcXwAc"
-
+    process.env.SUPABASE_URL!,
+    // "https://ebjlewzdbuwbzlmjlkvi.supabase.co",
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+    // "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImViamxld3pkYnV3YnpsbWpsa3ZpIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2NTE1NTA2NywiZXhwIjoyMDgwNzMxMDY3fQ.IlfKX12V1vo7loGFu23DdTDRyETmb-5j6C_KiPcXwAc"
 );
 
 export async function GET(req: Request) {

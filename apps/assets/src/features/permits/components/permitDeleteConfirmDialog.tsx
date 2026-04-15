@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@mui/material";
 import { toast } from "react-toastify";
 import DialogConfirm from "@/components/common/dialogs/DialogConfirm";
@@ -15,6 +16,7 @@ export function PermitDeleteConfirmDialog({
 }) {
     const [open, setOpen] = useState(false);
     const onClose = () => setOpen(false);
+    const router = useRouter();
 
     const handleDone = async () => {
         try {
@@ -23,6 +25,7 @@ export function PermitDeleteConfirmDialog({
                 deleteReason: permit.delete_reason ?? ""
             });
             toast.success(result.message);
+            router.push("/permits");
         } catch {
             toast.error("許認可の削除に失敗しました");
         } finally {

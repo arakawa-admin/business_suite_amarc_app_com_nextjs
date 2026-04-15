@@ -13,17 +13,46 @@ import type {
     UpdatePermitInput,
 } from "../types/permitTypes";
 
-export async function findPermitMany(): Promise<PermitListRow[]> {
+type FindPermitListParams = {
+    q?: string;
+    categoryId?: string;
+    status?: "" | "unknown" | "expired" | "alert_due" | "active";
+};
+
+export async function findPermitList(
+    params: FindPermitListParams = {},
+): Promise<PermitListRow[]> {
     const supabase = await createClient();
 
-    const { data, error } = await supabase
+    let query = supabase
         .schema("assets")
         .from("v_permits_list")
         .select("*")
         .order("created_at", { ascending: false });
 
+    if (params.q) {
+        const q = params.q.trim();
+        query = query.or(
+            [
+                `subject_name.ilike.%${q}%`,
+                `business_name.ilike.%${q}%`,
+                `permit_number.ilike.%${q}%`,
+            ].join(","),
+        )
+    }
+
+    if (params.categoryId) {
+        query = query.eq("category_id", params.categoryId);
+    }
+
+    if (params.status) {
+        query = query.eq("calculated_status_code", params.status);
+    }
+
+    const { data, error } = await query;
+
     if (error) {
-        throw new Error(`findPermitMany failed: ${error.message}`);
+        throw new Error(`findPermitList failed: ${error.message}`);
     }
 
     return (data ?? []) as PermitListRow[];
