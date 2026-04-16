@@ -37,6 +37,10 @@ create table if not exists assets.attachments (
     byte_size bigint not null,
     sha256 text null,
 
+    thumbnail_storage_key text null,
+    thumbnail_content_type text null,
+    thumbnail_byte_size bigint null,
+
     remarks text null,
 
     linked_at timestamptz null,
@@ -64,6 +68,9 @@ comment on column assets.attachments.original_filename is '元ファイル名';
 comment on column assets.attachments.content_type is 'MIMEタイプ';
 comment on column assets.attachments.byte_size is 'ファイルサイズ（byte）';
 comment on column assets.attachments.sha256 is '重複判定や整合性確認用ハッシュ';
+comment on column assets.attachments.thumbnail_storage_key is 'サムネイル画像のR2オブジェクトキー';
+comment on column assets.attachments.thumbnail_content_type is 'サムネイル画像のMIMEタイプ';
+comment on column assets.attachments.thumbnail_byte_size is 'サムネイル画像のファイルサイズ（byte）';
 comment on column assets.attachments.remarks is '備考';
 comment on column assets.attachments.linked_at is '業務レコードに初めて関連付いた日時。null は未確定の仮アップロード cronで定期削除される';
 comment on column assets.attachments.uploaded_by is 'アップロード実行者 staff id';

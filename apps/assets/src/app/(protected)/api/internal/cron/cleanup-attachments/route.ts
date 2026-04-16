@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
 import {
-    findStaleUnlinkedAttachmentsForCleanup,
+    findStaleOrphanAttachments,
     hardDeleteAttachments,
 } from "@/features/attachments/repositories/attachmentRepository";
 import { createR2Client } from "@cloudflare/storage/r2.server";
@@ -25,7 +25,7 @@ export async function POST(request: Request) {
     }
 
     try {
-        const candidates = await findStaleUnlinkedAttachmentsForCleanup({
+        const candidates = await findStaleOrphanAttachments({
             olderThanHours: 24,
             limit: 100,
         });
@@ -49,6 +49,15 @@ export async function POST(request: Request) {
                         Key: item.storageKey,
                     }),
                 );
+
+                if (item.thumbnailStorageKey) {
+                    await client.send(
+                        new DeleteObjectCommand({
+                            Bucket: item.storageBucket,
+                            Key: item.thumbnailStorageKey,
+                        }),
+                    );
+                }
 
                 deletedIds.push(item.id);
             } catch (error) {

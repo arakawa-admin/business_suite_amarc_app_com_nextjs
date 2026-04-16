@@ -15,7 +15,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 
-import PreviewLightbox from "@/components/common/parts/PreviewLightbox";
+import PreviewLightbox from "@ui/form/file/PreviewLightbox";
 
 import { AttachmentType } from "@/schemas/approval/attachmentSchema";
 

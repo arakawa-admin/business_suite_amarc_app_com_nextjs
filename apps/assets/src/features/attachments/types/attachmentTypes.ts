@@ -10,6 +10,9 @@ export type Attachment = {
     originalFilename: string;
     contentType: string | null;
     byteSize: number;
+    thumbnailStorageKey: string | null;
+    thumbnailContentType: string | null;
+    thumbnailByteSize: number | null;
     sha256: string | null;
     remarks: string | null;
     linkedAt: string | null;
@@ -41,6 +44,9 @@ export type CreateAttachmentInput = {
     originalFilename: string;
     contentType: string | null;
     byteSize: number;
+    thumbnailStorageKey?: string | null;
+    thumbnailContentType?: string | null;
+    thumbnailByteSize?: number | null;
     sha256?: string | null;
     remarks?: string | null;
     uploadedBy?: string | null;

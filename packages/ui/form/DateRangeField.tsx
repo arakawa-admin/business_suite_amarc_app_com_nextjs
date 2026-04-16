@@ -5,7 +5,7 @@ import { Stack } from "@mui/material";
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { isBefore, startOfDay, startOfMonth, startOfYear, endOfDay } from "date-fns";
 
-import SelectAnyDate, { DateMode } from "@ui/form/SelectAnyDate";
+import SelectAnyDate, { DateMode } from "./SelectAnyDate";
 
 type Granularity = "day" | "month" | "year";
 
@@ -69,7 +69,7 @@ export default function DateRangeField({
                         value={field.value ?? null}
                         minDate={minDate}
                         maxDate={maxDate}
-                        onChange={(d) => {
+                        onChange={(d: Date) => {
                             field.onChange(d ? startOfDay(d) : null);
 
                             // 終了が開始より前なら、開始に寄せる
@@ -101,7 +101,7 @@ export default function DateRangeField({
                         // 終了のminは開始日（ある場合）を優先
                         minDate={start ?? minDate}
                         maxDate={maxDate}
-                        onChange={(d) => field.onChange(d ? endOfDay(d) : null)}
+                        onChange={(d: Date) => field.onChange(d ? endOfDay(d) : null)}
                     />
                 )}
             />

@@ -1,31 +1,49 @@
 "use client";
 
-import { useState } from "react";
-import { Grid, Typography, Card, CardMedia, Button, Link, CardActions, IconButton } from "@mui/material";
+import { useState, useMemo } from "react";
+import { Box, Grid, Typography, Card, CardMedia, Button, CardActions, IconButton } from "@mui/material";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import CloseIcon from "@mui/icons-material/Close";
-import PreviewLightbox from "@/components/common/parts/PreviewLightbox";
+import PreviewLightbox from "./PreviewLightbox";
+import type { UploadPreviewItem } from "./types";
 
-type Preview = {
-    url: string;
-    type: "image" | "pdf";
-    name: string;
-    href?: string
+type Props = {
+    previews: UploadPreviewItem[];
+    onRemove?: (id: string) => void;
+    removable?: boolean;
 };
-
 export default function PreviewGrid({
     previews,
-    onRemove
-}: {
-    previews: Preview[],
-    onRemove: (index: number) => void;
-}) {
+    onRemove,
+    removable=false,
+}: Props) {
 
     const [open, setOpen] = useState(false);
     const [index, setIndex] = useState(0);
 
-    const handleOpen = (i: number) => {
-        setIndex(i);
+    const imagePreviews = useMemo(
+        () => previews.filter((item) => item.type === "image"),
+        [previews],
+    );
+
+    const handleOpen = (clickedIndex: number) => {
+        const clicked = previews[clickedIndex];
+
+        if (!clicked) {
+            return;
+        }
+
+        if (clicked.type === "pdf") {
+            window.open(clicked.viewUrl, "_blank", "noopener,noreferrer");
+            return;
+        }
+
+        const imageIndex = imagePreviews.findIndex((item) => item.id === clicked.id);
+        if (imageIndex < 0) {
+            return;
+        }
+
+        setIndex(imageIndex);
         setOpen(true);
     };
 
@@ -40,84 +58,119 @@ export default function PreviewGrid({
                     p: 1
                 }}
                 >
-                {previews.map((p, i) => (
-                    <Grid
-                        size={{ xs: 6, sm: 4, md: 3 }}
-                        key={p.url}
-                        onClick={() => handleOpen(i)}
-                        style={{
-                            cursor: "pointer",
-                        }}
-                        >
-                        <Card variant="outlined">
-                            {/* 削除ボタン */}
-                            <IconButton
-                                size="small"
-                                sx={{
-                                    position: "absolute",
-                                    top: 4,
-                                    right: 4,
-                                    bgcolor: "rgba(0,0,0,0.5)",
-                                    color: "#fff",
-                                    "&:hover": { bgcolor: "rgba(0,0,0,0.7)" },
-                                }}
-                                onClick={(e) => {
-                                    e.stopPropagation(); // Lightbox が開かないようにする
-                                    onRemove(i);
-                                }}
+                {previews.map((p, i) => {
+                    const previewSrc = p.thumbnailUrl || p.viewUrl;
+                    const hasThumbnail = !!previewSrc;
+
+                    return (
+                        <Grid
+                            size={{ xs: 6, sm: 4, md: 3 }}
+                            key={p.id}
                             >
-                                <CloseIcon fontSize="small" />
-                            </IconButton>
-                            <CardMedia
-                                component="img"
-                                height="194"
+                            <Card
+                                variant="outlined"
                                 sx={{
-                                    maxHeight: 120,
-                                    width: "100%",
-                                    objectFit: "cover",
-                                    objectPosition: "center",
+                                    position: "relative",
+                                    cursor: "pointer",
+                                    height: "100%",
                                 }}
-                                image={p.url}
-                                alt={p.name}
-                            />
-                            <CardActions
-                                sx={{
-                                    backgroundColor: "rgba(0, 0, 0, 0.1)",
-                                }}
-                                disableSpacing
+                                onClick={() => handleOpen(i)}
                                 >
-                                <Typography variant="body2">
-                                    {p.name}
+                                {removable && onRemove ? (
+                                    <IconButton
+                                        size="small"
+                                        sx={{
+                                            position: "absolute",
+                                            top: 4,
+                                            right: 4,
+                                            bgcolor: "rgba(0,0,0,0.5)",
+                                            color: "#fff",
+                                            "&:hover": { bgcolor: "rgba(0,0,0,0.7)" },
+                                        }}
+                                        onClick={(e) => {
+                                            e.stopPropagation(); // Lightbox が開かないようにする
+                                            onRemove(p.id);
+                                        }}
+                                    >
+                                        <CloseIcon fontSize="small" />
+                                    </IconButton>
+                                ) : null}
+
+                                {hasThumbnail ? (
+                                    <CardMedia
+                                        component="img"
+                                        height="194"
+                                        sx={{
+                                            maxHeight: 120,
+                                            width: "100%",
+                                            objectFit: "cover",
+                                            objectPosition: "center",
+                                        }}
+                                        image={previewSrc}
+                                        alt={p.name}
+                                    />
+                                ) : (
+                                    <Box
+                                        sx={{
+                                            height: 120,
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            bgcolor: "grey.100",
+                                            px: 2,
+                                            }}
+                                        >
+                                        <Typography variant="body2" color="text.secondary">
+                                        {p.type === "pdf" ? "PDF" : "画像"}
+                                        </Typography>
+                                    </Box>
+                                )}
+                                <CardActions
+                                    sx={{
+                                        backgroundColor: "rgba(0, 0, 0, 0.1)",
+                                    }}
+                                    disableSpacing
+                                    >
+                                    <Typography
+                                        variant="body2"
+                                        component={"span"}
+                                        sx={{
+                                            wordBreak: "break-all",
+                                            lineHeight: 1.4,
+                                        }}
+                                        >
+                                        {p.name}
+                                    </Typography>
                                     {p.type === "pdf" &&
-                                        <Link
-                                            underline="hover"
-                                            fontSize="small"
-                                            color="inherit"
+                                        <Button
+                                            variant="text"
+                                            size="small"
+                                            sx={{ ml: 1, p: 0, lineHeight: 1 }}
+                                            endIcon={<OpenInNewIcon sx={{ width: 14, height: 14 }} />}
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                window.open(p.href, "_blank");
+                                                window.open(p.viewUrl, "_blank", "noopener,noreferrer");
                                             }}
                                             >
-                                            <Button
-                                                endIcon={<OpenInNewIcon sx={{ ml: 0, width: 12, height: 12 }} />}
-                                                size="small"
-                                                sx={{ ml: 1 }}
-                                                >
-                                                PDFを開く
-                                            </Button>
-                                        </Link>
+                                            PDFを開く
+                                        </Button>
                                     }
-                                </Typography>
-                            </CardActions>
-                        </Card>
-                    </Grid>
-                ))}
+                                </CardActions>
+                            </Card>
+                        </Grid>
+                    );
+                })}
             </Grid>
 
             <PreviewLightbox
                 open={open}
                 onClose={() => setOpen(false)}
-                previews={previews}
+                previews={imagePreviews.map((item) => ({
+                    url: item.viewUrl,
+                    type: "image" as const,
+                    name: item.name,
+                    href: item.viewUrl,
+                }))}
                 index={index}
                 setIndex={setIndex}
             />

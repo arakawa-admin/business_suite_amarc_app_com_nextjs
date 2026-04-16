@@ -75,7 +75,11 @@ export function PermitListFilter({ categoryOptions }: Props) {
     }
 
     return (
-        <Paper variant="outlined" sx={{ p: 2 }}>
+        <Paper
+            // variant="outlined"
+            sx={{ p: 2, borderRadius: 4 }}
+            elevation={4}
+            >
             <Stack spacing={2}>
                 <Stack
                     direction={{ xs: "column", md: "row" }}

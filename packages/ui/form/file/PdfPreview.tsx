@@ -4,7 +4,7 @@ import { useRef, useState, useEffect } from "react";
 
 import { Box } from "@mui/material";
 
-import "@/lib/pdfWorker";
+import "@packages/lib/file/pdfWorker";
 import { Document, Page, 
     // pdfjs
 } from "react-pdf";

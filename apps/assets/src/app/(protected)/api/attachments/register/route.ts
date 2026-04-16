@@ -8,6 +8,9 @@ type RegisterAttachmentRequestBody = {
     originalFilename: string;
     contentType: string | null;
     byteSize: number;
+    thumbnailStorageKey: string | null;
+    thumbnailContentType: string | null;
+    thumbnailByteSize: number | null;
     sha256?: string | null;
     remarks?: string | null;
 };
@@ -34,6 +37,10 @@ export async function POST(request: Request) {
             sha256: body.sha256 ?? null,
             remarks: body.remarks ?? null,
             uploadedBy: currentStaffId ?? null,
+
+            thumbnailStorageKey: body.thumbnailStorageKey,
+            thumbnailContentType: body.thumbnailContentType,
+            thumbnailByteSize: body.thumbnailByteSize,
         });
 
         return NextResponse.json({

@@ -172,7 +172,7 @@ export function PermitList({ rows, categoryOptions }: Props) {
                 >
                 <Box>
                     <Typography
-                        variant="h6"
+                        variant="h5"
                         sx={{ fontWeight: 'bold', px: 1 }}
                         >
                         {TITLE}
@@ -192,7 +192,11 @@ export function PermitList({ rows, categoryOptions }: Props) {
                 categoryOptions={categoryOptions}
             />
 
-            <Paper variant="outlined" sx={{ p: 1 }}>
+            <Paper
+                // variant="outlined"
+                sx={{ p: 2, borderRadius: 4}}
+                elevation={4}
+                >
                 <DataGrid
                     rows={rows}
                     columns={columns}

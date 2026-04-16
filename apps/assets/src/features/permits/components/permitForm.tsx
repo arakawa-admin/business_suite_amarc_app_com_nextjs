@@ -32,8 +32,10 @@ import SelectDateField from "@ui/form/SelectDateField";
 import AutocompleteField from "@ui/form/AutocompleteField";
 import SelectField from "@ui/form/SelectField";
 
-import { AttachmentUploader } from "@/features/attachments/components/AttachmentUploader";
-import { PermitAttachmentFormValues } from "@/features/permits/schemas/permitSchema";
+import { PermitAttachmentUploader } from "@/features/attachments/components/PermitAttachmentUploader";
+import {
+    type AttachmentFormItem,
+} from "@/features/attachments/types/attachmentUiTypes";
 
 type Props = {
     mode: "create" | "edit";
@@ -43,6 +45,7 @@ type Props = {
     subjectNameOptions: { id: string; name: string }[];
     businessNameOptions: { id: string; name: string }[];
     intervalLabelOptions: { id: string; name: string }[];
+    defaultAttachments?: AttachmentFormItem[];
 };
 
 export function PermitForm({
@@ -53,6 +56,7 @@ export function PermitForm({
     subjectNameOptions,
     businessNameOptions,
     intervalLabelOptions,
+    defaultAttachments,
 }: Props) {
     const router = useRouter();
     const isEdit = mode === "edit";
@@ -77,7 +81,9 @@ export function PermitForm({
 
     const [reminderStepMonths, setReminderStepMonths] = useState(0);
     const [alertLeadMonths, setAlertLeadMonths] = useState(0);
-    const [attachments, setAttachments] = useState<PermitAttachmentFormValues[]>([]);
+    const [attachments, setAttachments] = useState<AttachmentFormItem[]>(
+        defaultAttachments ?? []
+    );
 
     const handleSubmit = methods.handleSubmit(async (values) => {
         try {
@@ -151,13 +157,16 @@ export function PermitForm({
         <FormProvider {...methods}>
             <Box component="form" onSubmit={handleSubmit}>
                 <Stack spacing={2}>
-                    <Typography variant="body1" sx={{ px: 1, fontWeight: "bold" }}>許認可 {isEdit ? "編集" : "新規登録"}</Typography>
+                    <Typography variant="h5" sx={{ px: 1, fontWeight: "bold" }}>許認可 {isEdit ? "編集" : "新規登録"}</Typography>
                     <Stack spacing={4}>
                         <Box>
                             <Typography variant="body2" sx={{ p: 1, color: "text.secondary" }}>
                                 基本情報
                             </Typography>
-                            <Paper variant="outlined" sx={{ p: 3 }}>
+                            <Paper
+                                variant="outlined"
+                                sx={{ p: 3 }}
+                                >
                                 <Stack spacing={2}>
                                     <SelectField
                                         name="categoryId"
@@ -326,11 +335,23 @@ export function PermitForm({
                                 添付ファイル
                             </Typography>
                             <Paper variant="outlined" sx={{ p: 3 }}>
-                                <AttachmentUploader
+                                {/* <FileInputField
+                                    name="attachments"
+                                    label="添付ファイル"
+                                    multiple
+                                    accept="image/*,.pdf"
+                                /> */}
+                                <PermitAttachmentUploader
                                     value={attachments}
                                     onChange={setAttachments}
-                                    // label="添付ファイル"
                                 />
+                                {/* <PreviewGrid
+                                    previews={toAttachmentPreviewItems(attachments)}
+                                    removable
+                                    onRemove={(id) => {
+                                        setAttachments((prev) => prev.filter((item) => item.attachmentId !== id));
+                                    }}
+                                    /> */}
                             </Paper>
                         </Box>
 

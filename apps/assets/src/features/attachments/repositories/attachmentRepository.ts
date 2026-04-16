@@ -14,6 +14,9 @@ type AttachmentRow = {
     original_filename: string;
     content_type: string | null;
     byte_size: number;
+    thumbnail_storage_key: string | null;
+    thumbnail_content_type: string | null;
+    thumbnail_byte_size: number | null;
     sha256: string | null;
     remarks: string | null;
     linked_at: string | null;
@@ -33,6 +36,9 @@ function toAttachmentModel(row: AttachmentRow): Attachment {
         originalFilename: row.original_filename,
         contentType: row.content_type,
         byteSize: row.byte_size,
+        thumbnailStorageKey: row.thumbnail_storage_key,
+        thumbnailContentType: row.thumbnail_content_type,
+        thumbnailByteSize: row.thumbnail_byte_size,
         sha256: row.sha256,
         remarks: row.remarks,
         linkedAt: row.linked_at,
@@ -52,6 +58,9 @@ function toCreateAttachmentRow(input: CreateAttachmentInput) {
         original_filename: input.originalFilename,
         content_type: input.contentType,
         byte_size: input.byteSize,
+        thumbnail_storage_key: input.thumbnailStorageKey ?? null,
+        thumbnail_content_type: input.thumbnailContentType ?? null,
+        thumbnail_byte_size: input.thumbnailByteSize ?? null,
         sha256: input.sha256 ?? null,
         remarks: input.remarks ?? null,
         uploaded_by: input.uploadedBy ?? null,
@@ -169,6 +178,7 @@ type StaleUnlinkedAttachment = {
     id: string;
     storageBucket: string;
     storageKey: string;
+    thumbnailStorageKey: string | null;
 };
 
 export async function markAttachmentsLinked(
@@ -196,7 +206,7 @@ export async function markAttachmentsLinked(
 }
 
 // for cron
-export async function findStaleUnlinkedAttachmentsForCleanup(params?: {
+export async function findStaleOrphanAttachments(params?: {
     olderThanHours?: number;
     limit?: number;
 }): Promise<StaleUnlinkedAttachment[]> {
@@ -212,10 +222,19 @@ export async function findStaleUnlinkedAttachmentsForCleanup(params?: {
     const { data, error } = await supabase
         .schema("assets")
         .from("attachments")
-        .select("id, storage_bucket, storage_key")
+        .select(`
+            id,
+            storage_bucket,
+            storage_key,
+            thumbnail_storage_key,
+            attachment_links!left (
+                id,
+                deleted_at
+            )
+        `)
         .is("deleted_at", null)
-        .is("linked_at", null)
         .lt("created_at", threshold)
+        .is("attachment_links.deleted_at", null)
         .order("created_at", { ascending: true })
         .limit(limit);
     if (error) {
@@ -224,10 +243,16 @@ export async function findStaleUnlinkedAttachmentsForCleanup(params?: {
         );
     }
 
-    return (data ?? []).map((row) => ({
+    const rows = (data ?? []).filter((row: any) => {
+        const links = row.attachment_links ?? [];
+        return links.length === 0;
+    });
+
+    return rows.slice(0, limit).map((row: any) => ({
         id: row.id as string,
         storageBucket: row.storage_bucket as string,
         storageKey: row.storage_key as string,
+        thumbnailStorageKey: row.thumbnail_storage_key as string | null,
     }));
 }
 // for cron

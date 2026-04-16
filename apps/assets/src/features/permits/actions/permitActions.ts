@@ -7,8 +7,9 @@ import {
     replacePermitReminders,
     updatePermit,
 } from "../repositories/permitRepository";
-import { createAttachmentLinks } from "../../attachments/repositories/attachmentLinkRepository";
+import { createAttachmentLinks, syncAttachmentLinks } from "../../attachments/repositories/attachmentLinkRepository";
 import { markAttachmentsLinked } from "@/features/attachments/repositories/attachmentRepository";
+import { findCurrentStaffIdOrThrow } from "@/features/auth/repositories/currentStaffRepository";
 
 import {
     createPermitSchema,
@@ -69,6 +70,8 @@ export async function permitEditAction(
         throw new Error("入力内容を確認してください。");
     }
 
+    const currentStaffId = await findCurrentStaffIdOrThrow();
+
     await updatePermit(
         permitId,
         mapPermitSubmitValuesToUpdateInput(parsed.data),
@@ -78,17 +81,16 @@ export async function permitEditAction(
         mapPermitSubmitValuesToReplaceRemindersInput(permitId, parsed.data),
     );
 
-    if (parsed.data.attachments.length > 0) {
-        await createAttachmentLinks(
-            parsed.data.attachments.map((item, index) => ({
-                attachmentId: item.attachmentId,
-                targetType: "permit",
-                targetId: permitId,
-                attachmentRole: "general",
-                sortOrder: index+1,
-            })),
-        );
-    }
+    await syncAttachmentLinks({
+            targetType: "permit",
+            targetId: permitId,
+            attachments: parsed.data.attachments.map((item) => ({
+            attachmentId: item.attachmentId,
+            attachmentRole: "general",
+        })),
+        createdBy: currentStaffId,
+        deletedBy: currentStaffId,
+    });
 
     revalidatePath("/permits");
     revalidatePath(`/permits/${permitId}`);

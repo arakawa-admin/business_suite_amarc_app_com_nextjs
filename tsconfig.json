@@ -19,8 +19,8 @@
       }
     ],
 		"paths": {
-			"@/*": ["./src/*"],
-      "@/types/*": ["./types/*"]
+			"@packages/*": ["./packages/*"],
+      "@types/*": ["./packages/db-types/*"]
 		}
   },
   "include": [

@@ -33,7 +33,7 @@ type Props = {
     includeAll?: boolean
 };
 
-import { FetchResult } from "../../db-types/fetch-result";
+import { FetchResult } from "../../types/fetch-result";
 import { getMasterDepartments } from '../../lib/actions/common/masterDepartment';
 // const fetcher = () => fetch("/api/master-departments").then(res => res.json());
 

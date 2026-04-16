@@ -7,6 +7,9 @@ import {
 import { mapPermitRowToFormValues } from "@/features/permits/mappers/permitMappers";
 import { findPermitLabelOptions } from "@/features/permits/repositories/permitRepository";
 import { findPermitCategoryList } from "@/features/master/permit-categories/repositories/permitCategoryRepository";
+import { findLinkedAttachmentsByTarget } from "@/features/attachments/repositories/attachmentLinkRepository";
+import { createAttachmentViewUrl } from "@/features/attachments/repositories/attachmentViewRepository";
+
 import  { Box, Container, Stack } from "@mui/material";
 import AssetsBreadcrumbs from "@/components/common/layout/AssetsBreadcrumbs";
 
@@ -32,6 +35,22 @@ export default async function PermitEditPage({
     const businessNameOptions = await findPermitLabelOptions('business_name');
     const intervalLabelOptions = await findPermitLabelOptions('required_interval_label');
 
+    const linkedAttachments = await findLinkedAttachmentsByTarget({ targetType: "permit", targetId: id });
+    const itemsWithViewUrl = await Promise.all(
+        linkedAttachments.map(async (item) => {
+            const result = await createAttachmentViewUrl(item.attachmentId);
+
+            return {
+                attachmentId: item.attachmentId,
+                originalFilename: item.originalFilename,
+                contentType: item.contentType,
+                byteSize: item.byteSize,
+                viewUrl: result.viewUrl,
+                thumbnailViewUrl: result.thumbnailViewUrl ?? "",
+                previewUrl: null,
+            };
+        }),
+    );
     return (
         <Box>
             <Container>
@@ -43,6 +62,7 @@ export default async function PermitEditPage({
                             { title: `編集` },
                         ]}
                         />
+
                         <PermitForm
                             mode="edit"
                             editId={id}
@@ -51,6 +71,7 @@ export default async function PermitEditPage({
                             subjectNameOptions={subjectNameOptions}
                             businessNameOptions={businessNameOptions}
                             intervalLabelOptions={intervalLabelOptions}
+                            defaultAttachments={itemsWithViewUrl}
                         />
                 </Stack>
             </Container>

@@ -29,7 +29,7 @@ type Props = {
 };
 
 const fetcher = () => getMasterStaffs();
-import { FetchResult } from "../../db-types/fetch-result";
+import { FetchResult } from "../../types/fetch-result";
 
 export default function StaffSelectField({
     name = "staff_id",

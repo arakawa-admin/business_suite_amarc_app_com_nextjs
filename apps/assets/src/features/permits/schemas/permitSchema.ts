@@ -16,6 +16,9 @@ export const uploadedAttachmentItemSchema = z.object({
     originalFilename: z.string().trim().min(1, "originalFilename は必須です"),
     contentType: z.string().nullable(),
     byteSize: z.number().int().min(0, "byteSize は0以上である必要があります"),
+    storageKey: z.string().trim().nullish(),
+    previewUrl: z.string().trim().nullish(),
+    viewUrl: z.string().trim().nullish(),
 });
 export type PermitAttachmentFormValues = z.input<typeof uploadedAttachmentItemSchema>;
 

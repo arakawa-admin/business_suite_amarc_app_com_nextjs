@@ -12,13 +12,13 @@ import {
 import { Controller, useFormContext } from "react-hook-form";
 import { useState } from "react";
 
-import DropZone from "@ui/form/file/DropZone";
-import FilePicker from "@ui/form/file/FilePicker";
-import SortablePreviewGrid from "@ui/form/file/SortablePreviewGrid";
-import PreviewLightbox from "@/components/common/parts/PreviewLightbox";
+import DropZone from "./file/DropZone";
+import FilePicker from "./file/FilePicker";
+import SortablePreviewGrid from "./file/SortablePreviewGrid";
+import PreviewLightbox from "@packages/ui/form/file/PreviewLightbox";
 
-import { compressImage } from "@/lib/file/compressImage";
-import { compressPdf, generatePdfThumb, generateImageThumb } from "@/lib/file/pdfToThumbnail";
+import { compressImage } from "../../lib/file/compressImage";
+import { compressPdf, generatePdfThumb, generateImageThumb } from "../../lib/file/pdfToThumbnail";
 
 type Attachment = {
     file: File,
