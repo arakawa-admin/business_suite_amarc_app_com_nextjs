@@ -27,6 +27,7 @@
     "@mui/material": "^7.3.7",
     "@mui/x-data-grid": "^8.28.2",
     "@mui/x-date-pickers": "^8.26.0",
+    "@react-pdf/renderer": "^4.5.1",
     "@supabase/auth-helpers-nextjs": "^0.15.0",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.93.1",
