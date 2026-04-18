@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@mui/material";
 import { toast } from "react-toastify";
-import DialogConfirm from "@/components/common/dialogs/DialogConfirm";
+import DialogConfirm from "@ui/dialogs/DialogConfirm";
 
 import { softDeletePermitAction } from "../actions/permitDeleteActions";
 import type { PermitDetailRow } from "../types/permitTypes";

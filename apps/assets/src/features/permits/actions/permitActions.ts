@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import {
+    findPermitById,
     createPermit,
     createPermitReminders,
     replacePermitReminders,
@@ -10,6 +11,7 @@ import {
 import { createAttachmentLinks, syncAttachmentLinks } from "../../attachments/repositories/attachmentLinkRepository";
 import { markAttachmentsLinked } from "@/features/attachments/repositories/attachmentRepository";
 import { findCurrentStaffIdOrThrow } from "@/features/auth/repositories/currentStaffRepository";
+import { logCreateAudit, logUpdateAudit, buildAuditDiff } from "@/features/audit/services/auditLogService";
 
 import {
     createPermitSchema,
@@ -26,6 +28,7 @@ export async function permitCreateAction(
     values: PermitSubmitValues,
 ): Promise<{ id: string }> {
     const parsed = createPermitSchema.safeParse(values);
+    const currentStaffId = await findCurrentStaffIdOrThrow();
 
     if (!parsed.success) {
         throw new Error("入力内容を確認してください。");
@@ -52,9 +55,19 @@ export async function permitCreateAction(
                 sortOrder: index+1,
             })),
         );
-        
         await markAttachmentsLinked(parsed.data.attachments.map((item) => item.attachmentId));
     }
+
+    await logCreateAudit({
+        entityType: "permit",
+        entityId: permit.id,
+        summary: "許認可登録",
+        currentStaffId: currentStaffId,
+        metadata: {
+            // TODO: 変更内容の詳細を記録する
+            // created: new Date().toISOString(),
+        },
+    });
 
     revalidatePath("/permits");
     return permit;
@@ -71,6 +84,8 @@ export async function permitEditAction(
     }
 
     const currentStaffId = await findCurrentStaffIdOrThrow();
+
+    const currentPermit = await findPermitById(permitId);
 
     await updatePermit(
         permitId,
@@ -90,6 +105,26 @@ export async function permitEditAction(
         })),
         createdBy: currentStaffId,
         deletedBy: currentStaffId,
+    });
+
+
+    const updatedPermit = await findPermitById(permitId);
+    if(currentPermit == null || updatedPermit == null) {
+        throw new Error("許認可が見つからないので、ログを記録できませんでした。");
+    }
+    const before = {...currentPermit};
+    const after = {...updatedPermit};
+    const diff = buildAuditDiff({
+        before,
+        after,
+    });
+
+    await logUpdateAudit({
+        entityType: "permit",
+        entityId: permitId,
+        summary: "許認可更新",
+        currentStaffId,
+        diff,
     });
 
     revalidatePath("/permits");

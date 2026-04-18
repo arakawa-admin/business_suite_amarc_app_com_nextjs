@@ -13,6 +13,7 @@ import {
     type SoftDeletePermitFormValues,
 } from "../schemas/deletePermitSchema";
 import { findCurrentStaffIdOrThrow } from "@/features/auth/repositories/currentStaffRepository";
+import { logDeleteAudit, logRestoreAudit } from "@/features/audit/services/auditLogService";
 
 export type PermitDeleteActionState = {
     ok: boolean;
@@ -42,6 +43,17 @@ export async function softDeletePermitAction(
             deleteReason: parsed.data.deleteReason,
         });
 
+        // ログ記録
+        await logDeleteAudit({
+            entityType: "permit",
+            entityId: parsed.data.permitId,
+            summary: "許認可削除",
+            currentStaffId,
+            // TODO
+            // metadata: {},
+            // deleted: {},
+        });
+
         revalidatePath("/permits");
         revalidatePath(`/permits/${parsed.data.permitId}`);
         revalidatePath(`/permits/${parsed.data.permitId}/edit`);
@@ -63,7 +75,21 @@ export async function restorePermitAction(
     permitId: string,
 ): Promise<PermitDeleteActionState> {
     try {
+        const currentStaffId = await findCurrentStaffIdOrThrow();
+
         await restorePermit(permitId);
+
+
+        // ログ記録
+        await logRestoreAudit({
+            entityType: "permit",
+            entityId: permitId,
+            summary: "許認可復元",
+            currentStaffId,
+            // TODO
+            // metadata: {},
+            // restored: {},
+        });
 
         revalidatePath("/permits");
         revalidatePath(`/permits/${permitId}`);

@@ -3019,7 +3019,6 @@ export async function seedPermits() {
                 due_on: r.due_on,
                 alert_on: r.alert_on,
                 completed_on: null,
-                memo: null,
             };
             const { error: reminderErr } = await assets
                 .from("reminders")

@@ -29,9 +29,11 @@ alter table assets.master_permit_categories enable row level security;
 alter table assets.attachments enable row level security;
 alter table assets.attachment_links enable row level security;
 alter table assets.reminders enable row level security;
-alter table assets.event_logs enable row level security;
+alter table assets.comments enable row level security;
+alter table assets.audit_logs enable row level security;
+-- alter table assets.event_logs enable row level security;
 alter table assets.permits enable row level security;
-alter table assets.permit_renewal_logs enable row level security;
+-- alter table assets.permit_renewal_logs enable row level security;
 alter table assets.vehicles enable row level security;
 alter table assets.vehicle_insurances enable row level security;
 alter table assets.vehicle_insurance_logs enable row level security;
@@ -55,10 +57,20 @@ drop policy if exists "reminders_insert_authenticated" on assets.reminders;
 drop policy if exists "reminders_update_authenticated" on assets.reminders;
 drop policy if exists "reminders_delete_authenticated" on assets.reminders;
 
-drop policy if exists "event_logs_select_authenticated" on assets.event_logs;
-drop policy if exists "event_logs_insert_authenticated" on assets.event_logs;
-drop policy if exists "event_logs_update_authenticated" on assets.event_logs;
-drop policy if exists "event_logs_delete_authenticated" on assets.event_logs;
+drop policy if exists "comments_select_authenticated" on assets.comments;
+drop policy if exists "comments_insert_authenticated" on assets.comments;
+drop policy if exists "comments_update_authenticated" on assets.comments;
+drop policy if exists "comments_delete_authenticated" on assets.comments;
+
+drop policy if exists "audit_logs_select_authenticated" on assets.audit_logs;
+drop policy if exists "audit_logs_insert_authenticated" on assets.audit_logs;
+drop policy if exists "audit_logs_update_authenticated" on assets.audit_logs;
+drop policy if exists "audit_logs_delete_authenticated" on assets.audit_logs;
+
+-- drop policy if exists "event_logs_select_authenticated" on assets.event_logs;
+-- drop policy if exists "event_logs_insert_authenticated" on assets.event_logs;
+-- drop policy if exists "event_logs_update_authenticated" on assets.event_logs;
+-- drop policy if exists "event_logs_delete_authenticated" on assets.event_logs;
 
 drop policy if exists "master_permit_categories_select_authenticated" on assets.master_permit_categories;
 drop policy if exists "master_permit_categories_insert_authenticated" on assets.master_permit_categories;
@@ -180,32 +192,89 @@ to authenticated
 using (true);
 
 -- =========================================================
--- event_logs
+-- audit_logs
 -- =========================================================
-create policy "event_logs_select_authenticated"
-on assets.event_logs
+create policy "audit_logs_select_authenticated"
+on assets.audit_logs
 for select
 to authenticated
 using (true);
 
-create policy "event_logs_insert_authenticated"
-on assets.event_logs
+create policy "audit_logs_insert_authenticated"
+on assets.audit_logs
 for insert
 to authenticated
 with check (true);
 
-create policy "event_logs_update_authenticated"
-on assets.event_logs
+create policy "audit_logs_update_authenticated"
+on assets.audit_logs
 for update
 to authenticated
 using (true)
 with check (true);
 
-create policy "event_logs_delete_authenticated"
-on assets.event_logs
+create policy "audit_logs_delete_authenticated"
+on assets.audit_logs
 for delete
 to authenticated
 using (true);
+
+-- =========================================================
+-- comments
+-- =========================================================
+create policy "comments_select_authenticated"
+on assets.comments
+for select
+to authenticated
+using (true);
+
+create policy "comments_insert_authenticated"
+on assets.comments
+for insert
+to authenticated
+with check (true);
+
+create policy "comments_update_authenticated"
+on assets.comments
+for update
+to authenticated
+using (true)
+with check (true);
+
+create policy "comments_delete_authenticated"
+on assets.comments
+for delete
+to authenticated
+using (true);
+
+
+-- =========================================================
+-- event_logs
+-- =========================================================
+-- create policy "event_logs_select_authenticated"
+-- on assets.event_logs
+-- for select
+-- to authenticated
+-- using (true);
+
+-- create policy "event_logs_insert_authenticated"
+-- on assets.event_logs
+-- for insert
+-- to authenticated
+-- with check (true);
+
+-- create policy "event_logs_update_authenticated"
+-- on assets.event_logs
+-- for update
+-- to authenticated
+-- using (true)
+-- with check (true);
+
+-- create policy "event_logs_delete_authenticated"
+-- on assets.event_logs
+-- for delete
+-- to authenticated
+-- using (true);
 
 -- =========================================================
 -- master_permit_categories

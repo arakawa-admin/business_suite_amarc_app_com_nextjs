@@ -165,7 +165,7 @@ export async function createPermitReminders(
             completed_on: null,
             // status_code: "planned",
             // status_name: "予定",
-            memo: null,
+            // memo: null,
         }));
 
     if (insertRows.length === 0) return;
@@ -210,7 +210,7 @@ export async function replacePermitReminders(
             completed_on: null,
             // status_code: "planned",
             // status_name: "予定",
-            memo: null,
+            // memo: null,
         }));
 
     if (insertRows.length === 0) return;

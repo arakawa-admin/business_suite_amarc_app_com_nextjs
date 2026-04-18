@@ -212,8 +212,6 @@ create table if not exists assets.reminders (
     alert_on date null,
     completed_on date null,
 
-    memo text null,
-
     created_at timestamptz not null default now(),
     created_by uuid null,
 
@@ -277,62 +275,285 @@ execute function public.set_updated_at();
 -- assets.event_logs
 -- 汎用イベントログ
 -- =========================================================
-drop table if exists assets.event_logs cascade;
+-- drop table if exists assets.event_logs cascade;
 
-create table if not exists assets.event_logs (
-    id uuid primary key default gen_random_uuid(),
+-- create table if not exists assets.event_logs (
+--     id uuid primary key default gen_random_uuid(),
 
-    target_type text not null,
-    target_id uuid not null,
+--     target_type text not null,
+--     target_id uuid not null,
 
-    event_type_code text not null,
-    event_type_name text not null,
-    occurred_at timestamptz not null,
+--     event_type_code text not null,
+--     event_type_name text not null,
+--     occurred_at timestamptz not null,
 
-    summary text null,
-    details jsonb not null default '{}'::jsonb,
+--     summary text null,
+--     details jsonb not null default '{}'::jsonb,
 
-    created_at timestamptz not null default now(),
-    created_by uuid null
-);
+--     created_at timestamptz not null default now(),
+--     created_by uuid null
+-- );
 
-comment on table assets.event_logs is '汎用イベントログ';
-comment on column assets.event_logs.target_type is '対象種別。例: permit, permit_renewal_log, vehicle, vehicle_insurance, vehicle_inspection_log';
-comment on column assets.event_logs.target_id is '対象レコードID';
-comment on column assets.event_logs.event_type_code is 'イベント種別コード';
-comment on column assets.event_logs.event_type_name is 'イベント種別名';
-comment on column assets.event_logs.occurred_at is '発生日時';
-comment on column assets.event_logs.summary is '人が読みやすい要約';
-comment on column assets.event_logs.details is 'イベント詳細(JSONB)';
+-- comment on table assets.event_logs is '汎用イベントログ';
+-- comment on column assets.event_logs.target_type is '対象種別。例: permit, permit_renewal_log, vehicle, vehicle_insurance, vehicle_inspection_log';
+-- comment on column assets.event_logs.target_id is '対象レコードID';
+-- comment on column assets.event_logs.event_type_code is 'イベント種別コード';
+-- comment on column assets.event_logs.event_type_name is 'イベント種別名';
+-- comment on column assets.event_logs.occurred_at is '発生日時';
+-- comment on column assets.event_logs.summary is '人が読みやすい要約';
+-- comment on column assets.event_logs.details is 'イベント詳細(JSONB)';
 
-alter table assets.event_logs
-    drop constraint if exists fk_assets_event_logs_created_by;
-alter table assets.event_logs
-    add constraint fk_assets_event_logs_created_by
-    foreign key (created_by) references common.master_staffs(id);
+-- alter table assets.event_logs
+--     drop constraint if exists fk_assets_event_logs_created_by;
+-- alter table assets.event_logs
+--     add constraint fk_assets_event_logs_created_by
+--     foreign key (created_by) references common.master_staffs(id);
 
-alter table assets.event_logs
-    drop constraint if exists chk_assets_event_logs_target_type;
-alter table assets.event_logs
-    add constraint chk_assets_event_logs_target_type
+-- alter table assets.event_logs
+--     drop constraint if exists chk_assets_event_logs_target_type;
+-- alter table assets.event_logs
+--     add constraint chk_assets_event_logs_target_type
+--     check (
+--         target_type in (
+--             'permit',
+--             'permit_renewal_log',
+--             'vehicle',
+--             'vehicle_insurance',
+--             'vehicle_inspection_log'
+--         )
+--     );
+
+-- create index if not exists idx_assets_event_logs_target
+--     on assets.event_logs (target_type, target_id);
+
+-- create index if not exists idx_assets_event_logs_occurred_at
+--     on assets.event_logs (occurred_at desc);
+
+-- create index if not exists idx_assets_event_logs_event_type_code
+--     on assets.event_logs (event_type_code);
+
+-- create index if not exists idx_assets_event_logs_details_gin
+--     on assets.event_logs using gin (details);
+
+
+/*
+=========================================================
+assets.comments / assets.audit_logs
+コメント・監査ログ用 migration SQL
+
+【目的】
+- reminders.memo を置き換える履歴テーブルとして comments を追加
+- 投稿 / 更新 / 削除などの事実ログを audit_logs に記録する
+- comments は物理削除とし、削除前本文は audit_logs.metadata に残す運用を前提とする
+
+【設計方針】
+- comments
+  - 人が投稿する本文
+  - permit / reminder に紐づけ可能
+  - reminder 由来投稿（メールリンク経由など）も保持可能
+  - updated_at は trigger で自動更新
+  - 論理削除は持たず、削除時は物理削除
+
+- audit_logs
+  - システム操作の事実ログ
+  - entity_type / entity_id / action_code / summary / metadata を保持
+  - 削除時は metadata に削除前コメント本文のスナップショットを保存する想定
+
+【補足】
+- target_type / entity_type は polymorphic なので、
+  target_id / entity_id の実体整合性はアプリ側で担保する
+=========================================================
+*/
+
+begin;
+
+-- =========================================================
+-- comments
+-- =========================================================
+drop table if exists assets.comments cascade;
+create table if not exists assets.comments (
+  id uuid not null default gen_random_uuid(),
+
+  target_type text not null,
+  target_id uuid not null,
+
+  -- comment_type_code text not null,
+  body text not null,
+
+  source_type text null,
+  -- reminder_id uuid null,
+
+  created_at timestamptz not null default now(),
+  created_by uuid null,
+
+  updated_at timestamptz not null default now(),
+  updated_by uuid null,
+
+  constraint comments_pkey
+    primary key (id),
+
+  constraint fk_assets_comments_created_by
+    foreign key (created_by)
+    references common.master_staffs(id),
+
+  constraint fk_assets_comments_updated_by
+    foreign key (updated_by)
+    references common.master_staffs(id),
+
+  -- constraint fk_assets_comments_reminder
+  --   foreign key (reminder_id)
+  --   references assets.reminders(id)
+  --   on delete set null,
+
+  constraint chk_assets_comments_target_type
     check (
-        target_type in (
-            'permit',
-            'permit_renewal_log',
-            'vehicle',
-            'vehicle_insurance',
-            'vehicle_inspection_log'
-        )
-    );
+      target_type = any (
+        array[
+          'permit'::text,
+          'reminder'::text
+        ]
+      )
+    ),
 
-create index if not exists idx_assets_event_logs_target
-    on assets.event_logs (target_type, target_id);
+  -- constraint chk_assets_comments_comment_type_code
+  --   check (
+  --     comment_type_code = any (
+  --       array[
+  --         'memo'::text,
+  --         'comment'::text,
+  --         'reminder_response'::text
+  --       ]
+  --     )
+  --   ),
 
-create index if not exists idx_assets_event_logs_occurred_at
-    on assets.event_logs (occurred_at desc);
+  constraint chk_assets_comments_source_type
+    check (
+      source_type is null
+      or source_type = any (
+        array[
+          'detail'::text,
+          'email_link'::text,
+          'manual'::text
+        ]
+      )
+    )
+) tablespace pg_default;
 
-create index if not exists idx_assets_event_logs_event_type_code
-    on assets.event_logs (event_type_code);
+comment on table assets.comments is
+'コメント / メモ / 対応記録テーブル。permit や reminder に紐づく人手投稿の本文を保持する。物理削除前提。';
 
-create index if not exists idx_assets_event_logs_details_gin
-    on assets.event_logs using gin (details);
+comment on column assets.comments.target_type is
+'コメント対象種別。permit / reminder を想定。';
+
+comment on column assets.comments.target_id is
+'コメント対象レコードID。target_type と組み合わせて解釈する。';
+
+-- comment on column assets.comments.comment_type_code is
+-- 'コメント種別。memo / comment / reminder_response を想定。';
+
+comment on column assets.comments.body is
+'コメント本文。';
+
+comment on column assets.comments.source_type is
+'投稿導線。detail / email_link / manual を想定。';
+
+-- comment on column assets.comments.reminder_id is
+-- '通知メール経由など、文脈となった reminder。target_type=reminder とは限らない。';
+
+comment on column assets.comments.created_by is
+'作成者 staff ID。selected_staff_id cookie から解決した current staff を想定。';
+
+comment on column assets.comments.updated_by is
+'更新者 staff ID。selected_staff_id cookie から解決した current staff を想定。';
+
+create index if not exists idx_assets_comments_target
+  on assets.comments using btree (target_type, target_id)
+  tablespace pg_default;
+
+create index if not exists idx_assets_comments_created_at
+  on assets.comments using btree (created_at desc)
+  tablespace pg_default;
+
+-- create index if not exists idx_assets_comments_reminder_id
+--   on assets.comments using btree (reminder_id)
+--   tablespace pg_default;
+
+create OR REPLACE trigger trg_assets_comments_updated_at
+before update on assets.comments
+for each row
+execute function set_updated_at();
+
+-- =========================================================
+-- audit_logs
+-- =========================================================
+drop table if exists assets.audit_logs cascade;
+create table if not exists assets.audit_logs (
+  id uuid not null default gen_random_uuid(),
+
+  entity_type text not null,
+  entity_id uuid not null,
+
+  action_code text not null,
+  summary text null,
+  metadata jsonb not null default '{}'::jsonb,
+
+  created_at timestamptz not null default now(),
+  created_by uuid null,
+
+  constraint audit_logs_pkey
+    primary key (id),
+
+  constraint fk_assets_audit_logs_created_by
+    foreign key (created_by)
+    references common.master_staffs(id),
+
+  constraint chk_assets_audit_logs_entity_type
+    check (
+      entity_type = any (
+        array[
+          'permit'::text,
+          'reminder'::text,
+          'comment'::text
+        ]
+      )
+    )
+) tablespace pg_default;
+
+comment on table assets.audit_logs is
+'監査ログ。投稿 / 更新 / 削除などの事実ログを保持する。';
+
+comment on column assets.audit_logs.entity_type is
+'対象エンティティ種別。permit / reminder / comment を想定。';
+
+comment on column assets.audit_logs.entity_id is
+'対象エンティティID。entity_type と組み合わせて解釈する。';
+
+comment on column assets.audit_logs.action_code is
+'操作種別。create / update / delete / complete などを想定。';
+
+comment on column assets.audit_logs.summary is
+'人間向け要約。例: コメントを登録、コメントを削除。';
+
+comment on column assets.audit_logs.metadata is
+'補助情報 JSON。削除時は削除前コメント本文スナップショットを保持する想定。';
+
+comment on column assets.audit_logs.created_by is
+'操作実行者 staff ID。selected_staff_id cookie から解決した current staff を想定。';
+
+create index if not exists idx_assets_audit_logs_entity
+  on assets.audit_logs using btree (entity_type, entity_id)
+  tablespace pg_default;
+
+create index if not exists idx_assets_audit_logs_created_at
+  on assets.audit_logs using btree (created_at desc)
+  tablespace pg_default;
+
+create index if not exists idx_assets_audit_logs_action_code
+  on assets.audit_logs using btree (action_code)
+  tablespace pg_default;
+
+create index if not exists idx_assets_audit_logs_metadata_gin
+  on assets.audit_logs using gin (metadata)
+  tablespace pg_default;
+
+commit;

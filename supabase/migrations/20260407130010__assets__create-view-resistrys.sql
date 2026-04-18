@@ -35,6 +35,32 @@ assets.v_permit_reminders
 */
 DROP view IF EXISTS assets.v_permit_reminders;
 create or replace view assets.v_permit_reminders as
+with reminder_comments as (
+    select
+        c.target_id as reminder_id,
+        count(*) as comment_count,
+        jsonb_agg(
+            jsonb_build_object(
+                'id', c.id,
+                'body', c.body,
+                'source_type', c.source_type,
+                'created_at', c.created_at,
+                'created_by', c.created_by,
+                'created_by_name', msc.name,
+                'updated_at', c.updated_at,
+                'updated_by', c.updated_by,
+                'updated_by_name', msu.name
+            )
+            order by c.created_at desc, c.id desc
+        ) as comments
+    from assets.comments c
+    left join common.master_staffs msc
+      on msc.id = c.created_by
+    left join common.master_staffs msu
+      on msu.id = c.updated_by
+    where c.target_type = 'reminder'
+    group by c.target_id
+)
 select
     r.id,
     r.target_type,
@@ -54,12 +80,17 @@ select
     r.due_on,
     r.alert_on,
     r.completed_on,
-    r.memo as reminder_memo,
     r.created_at,
-    r.updated_at
+    r.updated_at,
+
+    coalesce(rc.comment_count, 0) as comment_count,
+    coalesce(rc.comments, '[]'::jsonb) as comments
+
 from assets.reminders r
 inner join assets.permits p
     on p.id = r.target_id
+left join reminder_comments rc
+    on rc.reminder_id = r.id
 where r.target_type = 'permit'
   and p.deleted_at is null;
 
@@ -113,9 +144,6 @@ comment on column assets.v_permit_reminders.alert_on is
 
 comment on column assets.v_permit_reminders.completed_on is
 '対応完了日。';
-
-comment on column assets.v_permit_reminders.reminder_memo is
-'通知レコードの補足メモ。assets.reminders.memo。';
 
 comment on column assets.v_permit_reminders.created_at is
 '通知レコード作成日時。';

@@ -181,6 +181,12 @@ type StaleUnlinkedAttachment = {
     thumbnailStorageKey: string | null;
 };
 
+//////////
+// * 添付した時点でattachmentsテーブルに保存される。
+// * 正式にPOSTした時にlinked_atに日時挿入。
+// * （孤児ファイル対策）として、cronで定期的に添付削除するが
+// * linked_atが入っているものは、削除対象外とする
+//////////
 export async function markAttachmentsLinked(
     attachmentIds: string[],
 ): Promise<void> {

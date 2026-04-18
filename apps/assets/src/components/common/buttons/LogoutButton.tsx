@@ -14,7 +14,7 @@ import {
 
 import LogoutIcon from '@mui/icons-material/Logout';
 
-import DialogConfirm from "@/components/common/dialogs/DialogConfirm";
+import DialogConfirm from "@ui/dialogs/DialogConfirm";
 
 export default function LogoutButton({
     mobile=false,

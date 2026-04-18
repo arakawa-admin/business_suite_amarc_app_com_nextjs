@@ -31,7 +31,7 @@ export default function MasterBreadcrumbs({
                 color="inherit"
                 onClick={() => router.push('/admin')}
                 >
-                <Button variant="text" startIcon={<HomeIcon />}>
+                <Button variant="text" startIcon={<HomeIcon />} size="small">
                     マスタ一覧
                 </Button>
             </Link>
@@ -46,6 +46,7 @@ export default function MasterBreadcrumbs({
                     <Button
                         variant="text"
                         disabled={item.href===undefined}
+                        size="small"
                         >
                         {item.title}
                     </Button>

@@ -90,6 +90,39 @@ export default function ClientPageForAdmin() {
                         </Paper>
                     </Box>
                 ))}
+                <Box>
+                    <Typography color="text.secondary" sx={{ p: 1 }}>
+                        ログ
+                    </Typography>
+                    <Paper sx={{ p: 2 }} variant="outlined">
+                        <Grid container spacing={2}>
+                            <Grid
+                                size={{ xs: 12, sm: 6, md: 4, lg: 3 }}
+                                >
+                                <Link
+                                    href={`/admin/audit-logs`}
+                                    passHref
+                                    >
+                                    <Button
+                                        variant="contained"
+                                        fullWidth
+                                        color={"inherit"}
+                                        size="large"
+                                        sx={{
+                                            fontWeight: 'bold',
+                                            fontSize: '1.2em',
+                                            p: 2,
+                                            minHeight: '80px',
+                                            borderRadius: '20px',
+                                        }}
+                                        >
+                                        監査ログ
+                                    </Button>
+                                </Link>
+                            </Grid>
+                        </Grid>
+                    </Paper>
+                </Box>
             </Stack>
         </Container>
     );

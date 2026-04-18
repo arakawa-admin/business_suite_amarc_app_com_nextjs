@@ -20,6 +20,8 @@ export default function DialogConfirm({
     color = "primary",
     text,
     okText = "OK",
+    formId,
+    okButtonType = "button",
 }: {
     isOpen?: boolean;
     onDone: () => void;
@@ -28,15 +30,14 @@ export default function DialogConfirm({
     color?: "error" | "inherit" | "warning" | "primary" | "secondary" | "success" | "info";
     text?: string;
     okText: string;
+    formId?: string;
+    okButtonType?: "button" | "submit";
 }) {
     const [confirmOpen, setConfirmOpen] = useState(isOpen);
     useEffect(() => { setConfirmOpen(isOpen); }, [isOpen]);
 
-
-    const handleConfirmCloseDialog = (event: React.MouseEvent<HTMLButtonElement>, reason?: string) => {
-        if (reason !== 'backdropClick') {
-            setConfirmOpen(false);
-        }
+    const handleConfirmCloseDialog = () => {
+        setConfirmOpen(false);
     };
 
     const handleDone = async() => {
@@ -45,13 +46,17 @@ export default function DialogConfirm({
     }
     const handleCancel = async() => {
         setConfirmOpen(false);
-        if (onCancel) { onCancel(); }
+        onCancel?.();
     }
 
     return (
         <Dialog
             open={confirmOpen}
-            onClose={handleConfirmCloseDialog}
+            onClose={(_, reason) => {
+                if (reason !== "backdropClick") {
+                    handleConfirmCloseDialog();
+                }
+            }}
             fullWidth
             maxWidth="sm"
             >
@@ -67,22 +72,18 @@ export default function DialogConfirm({
                 確認
             </Toolbar>
 
-            {title && title !== "" && (
-                <DialogTitle
-                    sx={{
-                        fontWeight: 'bold',
-                    }}
-                    >
+            {title ? (
+                <DialogTitle sx={{ fontWeight: "bold" }}>
                     {title}
                 </DialogTitle>
-            )}
-            {text && text !== "" && (
+            ) : null}
+
+            {text ? (
                 <DialogContent>
-                    <DialogContentText>
-                        {text}
-                    </DialogContentText>
+                    <DialogContentText>{text}</DialogContentText>
                 </DialogContent>
-            )}
+            ) : null}
+
             <DialogActions
                 sx={{ borderTop: '1px solid #ccc' }}
                 >
@@ -97,8 +98,10 @@ export default function DialogConfirm({
                     variant="contained"
                     className={`bg-gradient-to-br from-${color ?? "primary"}-dark via-${color ?? "primary"}-main to-${color ?? "primary"}-light`}
                     sx={{ p: 1, fontWeight: 'bold', fontSize: '1.2em', flexGrow: 1 }}
-                    onClick={handleDone}
                     color={color}
+                    type={okButtonType}
+                    form={formId}
+                    onClick={okButtonType === "button" ? handleDone : undefined}
                     >
                     {okText}
                 </Button>

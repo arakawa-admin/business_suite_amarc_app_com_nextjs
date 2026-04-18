@@ -6,6 +6,7 @@ import {
 import { PermitDetail } from "@/features/permits/components/permitDetail";
 import { findLinkedAttachmentsByTarget } from "@/features/attachments/repositories/attachmentLinkRepository";
 import { createAttachmentViewUrl } from "@/features/attachments/repositories/attachmentViewRepository";
+import { findCommentsByTarget } from "@/features/permits/comments/repositories/commentRepository";
 
 export default async function PermitDetailPage({
     params,
@@ -23,6 +24,12 @@ export default async function PermitDetailPage({
     if (!permit) {
         notFound();
     }
+
+    const comments = await findCommentsByTarget({
+        targetType: "permit",
+        targetId: id,
+    });
+
     const itemsWithViewUrl = await Promise.all(
         linkedAttachments.map(async (item) => {
             const result = await createAttachmentViewUrl(item.attachmentId);
@@ -37,10 +44,12 @@ export default async function PermitDetailPage({
             };
         }),
     );
+
     return (
         <PermitDetail
             permit={permit}
             reminders={reminders}
+            comments={comments}
             attachments={itemsWithViewUrl}
             />
     );

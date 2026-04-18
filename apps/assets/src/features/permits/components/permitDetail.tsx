@@ -3,12 +3,13 @@
 import Link from "next/link";
 import {
     Alert,
+    Avatar,
     Box,
     Button,
     Card,
     CardContent,
+    Chip,
     Container,
-    Divider,
     Grid,
     Paper,
     Stack,
@@ -21,17 +22,26 @@ import type {
 import AssetsBreadcrumbs from "@/components/common/layout/AssetsBreadcrumbs";
 import { PermitDeleteConfirmDialog } from "./permitDeleteConfirmDialog";
 import { PermitHardDeleteButton } from "./permitHardDeleteButton";
+import { PermitCommentList } from "@/features/permits/comments/components/PermitCommentList";
+
 import EditIcon from "@mui/icons-material/Edit";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 
 import PreviewGrid from "@ui/form/file/PreviewGrid";
 import { type AttachmentFormItem, toAttachmentPreviewItems } from "@/features/attachments/types/attachmentUiTypes";
+import { type CommentListItem } from "@/features/permits/comments/repositories/commentRepository";
+import { PermitCommentRegisterButton } from "@/features/permits/comments/components/PermitCommentRegisterButton";
+import { ReminderCommentRegisterButton } from "@/features/permits/comments/components/ReminderCommentRegisterButton";
 
+type PermitReminderViewRowWithComment = PermitReminderViewRow & {
+    comments: CommentListItem[];
+}
 type Props = {
     permit: PermitDetailRow;
-    reminders: PermitReminderViewRow[];
+    reminders: PermitReminderViewRowWithComment[];
     attachments: AttachmentFormItem[];
+    comments: CommentListItem[];
     showHardDeleteButton?: boolean;
 };
 
@@ -66,18 +76,23 @@ export function PermitDetail({
     permit,
     reminders,
     attachments,
+    comments,
     showHardDeleteButton = false,
 }: Props) {
     return (
         <Stack spacing={4}>
-            <AssetsBreadcrumbs
-                items={[
-                    { title: "許認可一覧", href: "/permits" },
-                    { title: `詳細${permit.permit_number ? ` (${permit.permit_number})` : ""}` },
-                ]}
-            />
             <Box>
-                <Container maxWidth="xl">
+                <Container maxWidth="lg">
+                    <AssetsBreadcrumbs
+                        items={[
+                            { title: "許認可一覧", href: "/permits" },
+                            { title: `詳細${permit.permit_number ? ` (${permit.permit_number})` : ""}` },
+                        ]}
+                    />
+                </Container>
+            </Box>
+            <Box>
+                <Container maxWidth="lg">
                     <Stack spacing={2}>
                         <Stack
                             direction="row"
@@ -203,30 +218,43 @@ export function PermitDetail({
                                                         まだ登録されていません。
                                                     </Alert>
                                                 ) : (
-                                                    <Stack>
-                                                        {reminders.map((row) => (
-                                                            <Box key={row.id} sx={{ mx: 1 }}>
+                                                    <Stack spacing={0.5}>
+                                                        {reminders.map((row, index) => (
+                                                            <Paper key={row.id} sx={{ p: 2 }} variant="outlined">
                                                                 <Stack spacing={2}>
-                                                                    <Grid container spacing={2}>
-                                                                        <Grid size={{ xs: 12, md: 3 }}>
-                                                                            <RowItem label="対象日" value={row.due_on} />
-                                                                        </Grid>
-                                                                        <Grid size={{ xs: 12, md: 3 }}>
-                                                                            <RowItem label="通知日" value={row.alert_on} />
-                                                                        </Grid>
-                                                                        <Grid size={{ xs: 12, md: 3 }}>
-                                                                            <RowItem label="完了日" value={row.completed_on} />
-                                                                        </Grid>
-                                                                        <Grid size={{ xs: 12, md: 3 }}>
-                                                                            <RowItem
-                                                                                label="補足メモ"
-                                                                                value={row.reminder_memo}
-                                                                            />
-                                                                        </Grid>
-                                                                    </Grid>
+                                                                    <Stack direction={"row"} flexWrap={"wrap"} gap={2} alignItems={"center"} justifyContent={"space-between"}>
+                                                                        <Box>
+                                                                            <Avatar
+                                                                                sx={{ width: 28, height: 28, bgcolor: "primary.main", fontSize: 14 }}
+                                                                                >{index+1}</Avatar>
+                                                                        </Box>
+                                                                        <Box>
+                                                                            <Chip label={`対象日`} sx={{ mr: 1 }} />
+                                                                            <Typography variant="body2" component={"span"}>{row.due_on ?? "-"}</Typography>
+                                                                        </Box>
+                                                                        <Box>
+                                                                            <Chip label={`通知日`} sx={{ mr: 1 }} />
+                                                                            <Typography variant="body2" component={"span"}>{row.alert_on ?? "-"}</Typography>
+                                                                        </Box>
+                                                                        <Box>
+                                                                            <Chip label={`完了日`} sx={{ mr: 1 }} />
+                                                                            <Typography variant="body2" component={"span"}>{row.completed_on ?? "-"}</Typography>
+                                                                        </Box>
+                                                                        {/* <Box>
+                                                                            <Chip label={`補足メモ`} sx={{ mr: 1 }} />
+                                                                            <Typography variant="body2" component={"span"}>{row.reminder_memo ?? "-"}</Typography>
+                                                                        </Box> */}
+                                                                        <Box>
+                                                                            <ReminderCommentRegisterButton reminderId={row.id} />
+                                                                        </Box>
+                                                                    </Stack>
+                                                                    {row.comments.length > 0 && (
+                                                                        <Box sx={{ bgcolor: "#fafafa", borderRadius: 1, p: 1 }}>
+                                                                            <PermitCommentList comments={row.comments} permitId={permit.id} />
+                                                                        </Box>
+                                                                    )}
                                                                 </Stack>
-                                                                <Divider sx={{ my: 1 }} />
-                                                            </Box>
+                                                            </Paper>
                                                         ))}
                                                     </Stack>
                                                 )}
@@ -266,6 +294,16 @@ export function PermitDetail({
                                             </Stack>
                                         </CardContent>
                                     </Card>
+                                </Box>
+
+                                <Box sx={{ bgcolor: "#fafafa", borderRadius: 1, p: 1 }}>
+                                    <Stack spacing={1}>
+                                        <PermitCommentList comments={comments} permitId={permit.id} />
+
+                                        <Box>
+                                            <PermitCommentRegisterButton permitId={permit.id} />
+                                        </Box>
+                                    </Stack>
                                 </Box>
                             </Stack>
                         </Paper>

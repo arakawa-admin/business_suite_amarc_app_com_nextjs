@@ -36,6 +36,7 @@ export default function AssetsBreadcrumbs({
                     >
                     <Button
                         variant="text"
+                        size="small"
                         // startIcon={<HomeIcon />}
                         >
                         ホーム
@@ -52,6 +53,7 @@ export default function AssetsBreadcrumbs({
                         <Button
                             variant="text"
                             disabled={item.href===undefined}
+                            size="small"
                             >
                             {item.title}
                         </Button>

@@ -39,6 +39,7 @@ export type PermitDetailRow = {
     delete_reason?: string | null;
 };
 
+import { type CommentListItem } from "@/features/permits/comments/repositories/commentRepository";
 export type PermitReminderViewRow = {
     id: string;
     target_type: "permit";
@@ -59,9 +60,11 @@ export type PermitReminderViewRow = {
     completed_on: string | null;
     // status_code: string;
     // status_name: string;
-    reminder_memo: string | null;
+    // reminder_memo: string | null;
     created_at: string;
     updated_at: string;
+
+    comments: CommentListItem[];
 };
 
 export type CreatePermitInput = {
