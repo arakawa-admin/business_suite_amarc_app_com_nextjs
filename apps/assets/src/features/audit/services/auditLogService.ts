@@ -1,7 +1,5 @@
-import {
-    insertAuditLog,
-    type AuditEntityType,
-} from "../repositories/auditLogRepository";
+import { insertAuditLog } from "../repositories/auditLogRepository";
+import type { AuditEntityType } from "../types/auditLogTypes";
 
 type JsonLike =
     | string

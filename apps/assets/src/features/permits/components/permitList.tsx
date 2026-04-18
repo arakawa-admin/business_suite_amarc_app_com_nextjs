@@ -17,6 +17,8 @@ import { PermitListFilter } from "./permitListFilter";
 
 import type { PermitListRow } from "../types/permitTypes";
 import AssetsBreadcrumbs from "@/components/common/layout/AssetsBreadcrumbs";
+import { PermitCsvExportButton } from "@/features/permits/components/PermitCsvExportButton";
+import AddIcon from '@mui/icons-material/Add';
 
 type CategoryOption = {
     id: string;
@@ -168,9 +170,9 @@ export function PermitList({ rows, categoryOptions }: Props) {
                 direction="row"
                 justifyContent="space-between"
                 alignItems="center"
-                gap={2}
+                gap={1}
                 >
-                <Box>
+                <Box sx={{ flex: "1 1 auto" }}>
                     <Typography
                         variant="h5"
                         sx={{ fontWeight: 'bold', px: 1 }}
@@ -183,9 +185,11 @@ export function PermitList({ rows, categoryOptions }: Props) {
                     component={Link}
                     href="/permits/new"
                     variant="contained"
+                    startIcon={<AddIcon />}
                 >
                     新規登録
                 </Button>
+                <PermitCsvExportButton />
             </Stack>
 
             <PermitListFilter

@@ -34,9 +34,11 @@ export async function permitCreateAction(
         throw new Error("入力内容を確認してください。");
     }
 
-    const permit = await createPermit(
-        mapPermitSubmitValuesToCreateInput(parsed.data),
-    );
+    const permit = await createPermit({
+        ...mapPermitSubmitValuesToCreateInput(parsed.data),
+        created_by: currentStaffId,
+        updated_by: currentStaffId,
+    });
 
     const reminderInput = mapPermitSubmitValuesToReplaceRemindersInput(
         permit.id,
@@ -89,7 +91,10 @@ export async function permitEditAction(
 
     await updatePermit(
         permitId,
-        mapPermitSubmitValuesToUpdateInput(parsed.data),
+        {
+            ...mapPermitSubmitValuesToUpdateInput(parsed.data),
+            updated_by: currentStaffId,
+        }
     );
 
     await replacePermitReminders(

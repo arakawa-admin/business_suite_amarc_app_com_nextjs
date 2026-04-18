@@ -1,6 +1,5 @@
 import "server-only";
 import { createClient } from "@supabase-shared/server";
-import { findCurrentStaffIdOrThrow } from "@/features/auth/repositories/currentStaffRepository";
 
 import type {
     CreatePermitInput,
@@ -12,6 +11,15 @@ import type {
     SoftDeletePermitInput,
     UpdatePermitInput,
 } from "../types/permitTypes";
+
+type CreatePermitInputWithStaff = CreatePermitInput & {
+    created_by?: string;
+    updated_by?: string;
+};
+type UpdatePermitInputWithStaff = UpdatePermitInput & {
+    created_by?: string;
+    updated_by?: string;
+};
 
 type FindPermitListParams = {
     q?: string;
@@ -28,6 +36,7 @@ export async function findPermitList(
         .schema("assets")
         .from("v_permits_list")
         .select("*")
+        .is("deleted_at", null)
         .order("created_at", { ascending: false });
 
     if (params.q) {
@@ -101,20 +110,14 @@ export async function findPermitRemindersByPermitId(
 }
 
 export async function createPermit(
-    input: CreatePermitInput,
+    params: CreatePermitInputWithStaff,
 ): Promise<{ id: string }> {
     const supabase = await createClient();
-    const currentStaffId = await findCurrentStaffIdOrThrow();
-    const inputWithStaff = {
-        ...input,
-        created_by: currentStaffId,
-        updated_by: currentStaffId,
-    }
 
     const { data, error } = await supabase
         .schema("assets")
         .from("permits")
-        .insert(inputWithStaff)
+        .insert(params)
         .select("id")
         .single();
 
@@ -127,19 +130,14 @@ export async function createPermit(
 
 export async function updatePermit(
     id: string,
-    input: UpdatePermitInput,
+    input: UpdatePermitInputWithStaff,
 ): Promise<void> {
     const supabase = await createClient();
-    const currentStaffId = await findCurrentStaffIdOrThrow();
-    const inputWithStaff = {
-        ...input,
-        updated_by: currentStaffId,
-    }
 
     const { error } = await supabase
         .schema("assets")
         .from("permits")
-        .update(inputWithStaff)
+        .update(input)
         .eq("id", id);
 
     if (error) {
@@ -259,7 +257,8 @@ export async function restorePermit(permitId: string): Promise<void> {
             deleted_by: null,
             delete_reason: null,
         })
-        .eq("id", permitId);
+        .eq("id", permitId)
+        .not("deleted_at", "is", null);
 
     if (error) {
         throw new Error(`restorePermit failed: ${error.message}`);
