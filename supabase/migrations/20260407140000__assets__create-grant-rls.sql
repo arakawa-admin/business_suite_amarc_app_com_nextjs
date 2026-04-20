@@ -35,9 +35,8 @@ alter table assets.audit_logs enable row level security;
 alter table assets.permits enable row level security;
 -- alter table assets.permit_renewal_logs enable row level security;
 alter table assets.vehicles enable row level security;
-alter table assets.vehicle_insurances enable row level security;
-alter table assets.vehicle_insurance_logs enable row level security;
-alter table assets.vehicle_inspection_logs enable row level security;
+alter table assets.master_vehicle_insurance_agencies enable row level security;
+alter table assets.master_vehicle_insurance_categories enable row level security;
 
 -- =========================================================
 -- drop old policies
@@ -92,20 +91,15 @@ drop policy if exists "vehicles_insert_authenticated" on assets.vehicles;
 drop policy if exists "vehicles_update_authenticated" on assets.vehicles;
 drop policy if exists "vehicles_delete_authenticated" on assets.vehicles;
 
-drop policy if exists "vehicle_insurances_select_authenticated" on assets.vehicle_insurances;
-drop policy if exists "vehicle_insurances_insert_authenticated" on assets.vehicle_insurances;
-drop policy if exists "vehicle_insurances_update_authenticated" on assets.vehicle_insurances;
-drop policy if exists "vehicle_insurances_delete_authenticated" on assets.vehicle_insurances;
+drop policy if exists "master_vehicle_insurance_agencies_select_authenticated" on assets.master_vehicle_insurance_agencies;
+drop policy if exists "master_vehicle_insurance_agencies_insert_authenticated" on assets.master_vehicle_insurance_agencies;
+drop policy if exists "master_vehicle_insurance_agencies_update_authenticated" on assets.master_vehicle_insurance_agencies;
+drop policy if exists "master_vehicle_insurance_agencies_delete_authenticated" on assets.master_vehicle_insurance_agencies;
 
-drop policy if exists "vehicle_insurance_logs_select_authenticated" on assets.vehicle_insurance_logs;
-drop policy if exists "vehicle_insurance_logs_insert_authenticated" on assets.vehicle_insurance_logs;
-drop policy if exists "vehicle_insurance_logs_update_authenticated" on assets.vehicle_insurance_logs;
-drop policy if exists "vehicle_insurance_logs_delete_authenticated" on assets.vehicle_insurance_logs;
-
-drop policy if exists "vehicle_inspection_logs_select_authenticated" on assets.vehicle_inspection_logs;
-drop policy if exists "vehicle_inspection_logs_insert_authenticated" on assets.vehicle_inspection_logs;
-drop policy if exists "vehicle_inspection_logs_update_authenticated" on assets.vehicle_inspection_logs;
-drop policy if exists "vehicle_inspection_logs_delete_authenticated" on assets.vehicle_inspection_logs;
+drop policy if exists "master_vehicle_insurance_categories_select_authenticated" on assets.master_vehicle_insurance_categories;
+drop policy if exists "master_vehicle_insurance_categories_insert_authenticated" on assets.master_vehicle_insurance_categories;
+drop policy if exists "master_vehicle_insurance_categories_update_authenticated" on assets.master_vehicle_insurance_categories;
+drop policy if exists "master_vehicle_insurance_categories_delete_authenticated" on assets.master_vehicle_insurance_categories;
 
 -- =========================================================
 -- attachments
@@ -391,83 +385,55 @@ using (true);
 -- =========================================================
 -- vehicle_insurances
 -- =========================================================
-create policy "vehicle_insurances_select_authenticated"
-on assets.vehicle_insurances
+create policy "master_vehicle_insurance_agencies_select_authenticated"
+on assets.master_vehicle_insurance_agencies
 for select
 to authenticated
 using (true);
 
-create policy "vehicle_insurances_insert_authenticated"
-on assets.vehicle_insurances
+create policy "master_vehicle_insurance_agencies_insert_authenticated"
+on assets.master_vehicle_insurance_agencies
 for insert
 to authenticated
 with check (true);
 
-create policy "vehicle_insurances_update_authenticated"
-on assets.vehicle_insurances
+create policy "master_vehicle_insurance_agencies_update_authenticated"
+on assets.master_vehicle_insurance_agencies
 for update
 to authenticated
 using (true)
 with check (true);
 
-create policy "vehicle_insurances_delete_authenticated"
-on assets.vehicle_insurances
+create policy "master_vehicle_insurance_agencies_delete_authenticated"
+on assets.master_vehicle_insurance_agencies
 for delete
 to authenticated
 using (true);
 
 -- =========================================================
--- vehicle_insurance_logs
+-- master_vehicle_insurance_categories
 -- =========================================================
-create policy "vehicle_insurance_logs_select_authenticated"
-on assets.vehicle_insurance_logs
+create policy "master_vehicle_insurance_categories_select_authenticated"
+on assets.master_vehicle_insurance_categories
 for select
 to authenticated
 using (true);
 
-create policy "vehicle_insurance_logs_insert_authenticated"
-on assets.vehicle_insurance_logs
+create policy "master_vehicle_insurance_categories_insert_authenticated"
+on assets.master_vehicle_insurance_categories
 for insert
 to authenticated
 with check (true);
 
-create policy "vehicle_insurance_logs_update_authenticated"
-on assets.vehicle_insurance_logs
+create policy "master_vehicle_insurance_categories_update_authenticated"
+on assets.master_vehicle_insurance_categories
 for update
 to authenticated
 using (true)
 with check (true);
 
-create policy "vehicle_insurance_logs_delete_authenticated"
-on assets.vehicle_insurance_logs
-for delete
-to authenticated
-using (true);
-
--- =========================================================
--- vehicle_inspection_logs
--- =========================================================
-create policy "vehicle_inspection_logs_select_authenticated"
-on assets.vehicle_inspection_logs
-for select
-to authenticated
-using (true);
-
-create policy "vehicle_inspection_logs_insert_authenticated"
-on assets.vehicle_inspection_logs
-for insert
-to authenticated
-with check (true);
-
-create policy "vehicle_inspection_logs_update_authenticated"
-on assets.vehicle_inspection_logs
-for update
-to authenticated
-using (true)
-with check (true);
-
-create policy "vehicle_inspection_logs_delete_authenticated"
-on assets.vehicle_inspection_logs
+create policy "master_vehicle_insurance_categories_delete_authenticated"
+on assets.master_vehicle_insurance_categories
 for delete
 to authenticated
 using (true);

@@ -18,6 +18,8 @@ import { seedMasterFormApproverAndViewers } from './apply__master_form_approver_
 import { seedMasterPermitCategories } from './assets__master_permits.seed.mjs';
 import { seedPermits } from './assets__permits.seed.mjs';
 
+import { seedMasterVehicleInsuranceAgencies, seedMasterVehicleInsuranceCategories } from './assets__vehicles.seed.mjs';
+
 const projectRef = process.env.SUPABASE_PROJECT_REF;
 
 const rl = createInterface({ input, output });
@@ -46,8 +48,13 @@ if ((projectRef) !== answer.trim()) {
     await seedMasterFormApproverAndViewers();
 
     // --- assets
+    // - permits
     await seedMasterPermitCategories();
     await seedPermits();
+
+    // - vehicles
+    await seedMasterVehicleInsuranceCategories();
+    await seedMasterVehicleInsuranceAgencies();
 
     console.log('Seed completed.');
     process.exit(0);
