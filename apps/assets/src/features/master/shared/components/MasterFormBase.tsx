@@ -2,17 +2,26 @@
 
 import { useActionState } from "react";
 import { Alert, Box, Button, Stack, TextField } from "@mui/material";
-import { createInitialMasterFormActionState } from "../helpers/masterFormActionState";
-import type { MasterFormActionState } from "../types/masterFormActionState";
+import { createInitialMasterFormActionState, type MasterFormActionState } from "../types/masterFormActionState";
 import type { MasterCommonFormValues } from "../types/masterCommonTypes";
 
-type Props = {
-    defaultValues: MasterCommonFormValues;
-    submitLabel: string;
+type EmptyExtra = Record<never, never>;
+
+type Props<
+    TExtra extends object = EmptyExtra,
+    TExtraFieldName extends string = never,
+> = {
+    defaultValues: MasterCommonFormValues<TExtra>;
+    submitLabel?: string;
     action: (
-        prevState: MasterFormActionState,
+        prevState: MasterFormActionState<TExtraFieldName>,
         formData: FormData,
-    ) => Promise<MasterFormActionState>;
+    ) => Promise<MasterFormActionState<TExtraFieldName>>;
+    renderExtraFields?: (args: {
+        defaultValues: MasterCommonFormValues<TExtra>;
+        state: MasterFormActionState<TExtraFieldName>;
+        isPending: boolean;
+    }) => React.ReactNode;
 };
 
 function toDatetimeLocalValue(value: string | null): string {
@@ -30,14 +39,18 @@ function toDatetimeLocalValue(value: string | null): string {
     return `${yyyy}-${mm}-${dd}T${hh}:${mi}`;
 }
 
-export function MasterFormBase({
+export function MasterFormBase<
+    TExtra extends object = EmptyExtra,
+    TExtraFieldName extends string = never,
+>({
     defaultValues,
-    submitLabel,
+    submitLabel="保存",
     action,
-}: Props) {
+    renderExtraFields,
+}: Props<TExtra, TExtraFieldName>) {
     const [state, formAction, isPending] = useActionState(
         action,
-        createInitialMasterFormActionState(),
+        createInitialMasterFormActionState<TExtraFieldName>(),
     );
 
     return (
@@ -89,12 +102,17 @@ export function MasterFormBase({
                     disabled={isPending}
                 />
 
+                {renderExtraFields?.({
+                    defaultValues,
+                    state,
+                    isPending,
+                })}
+
                 <TextField
                     name="validAt"
                     label="有効開始日時"
                     type="datetime-local"
                     defaultValue={toDatetimeLocalValue(defaultValues.validAt)}
-                    // InputLabelProps={{ shrink: true }}
                     error={!!state.fieldErrors.validAt?.length}
                     helperText={state.fieldErrors.validAt?.[0]}
                     disabled={isPending}
@@ -105,17 +123,14 @@ export function MasterFormBase({
                     label="有効終了日時"
                     type="datetime-local"
                     defaultValue={toDatetimeLocalValue(defaultValues.invalidAt)}
-                    // InputLabelProps={{ shrink: true }}
                     error={!!state.fieldErrors.invalidAt?.length}
                     helperText={state.fieldErrors.invalidAt?.[0]}
                     disabled={isPending}
                 />
 
-                <Stack direction="row" justifyContent="flex-end">
-                    <Button type="submit" variant="contained" disabled={isPending}>
-                        {submitLabel}
-                    </Button>
-                </Stack>
+                <Button type="submit" variant="contained" size="large" disabled={isPending} sx={{ py: 2, fontWeight: "bold", fontSize: "1.25rem" }}>
+                    {submitLabel}
+                </Button>
             </Stack>
         </Box>
     );

@@ -1,7 +1,7 @@
 import { findPermitList } from "@/features/permits/repositories/permitRepository";
 import { PermitList } from "@/features/permits/components/permitList";
 
-import { findPermitCategoryList } from "@/features/master/permit-categories/repositories/permitCategoryRepository";
+import { findPermitCategoryList } from "@/features/master/permit/permit-categories/repositories/permitCategoryRepository";
 
 type Props = {
     searchParams: Promise<{

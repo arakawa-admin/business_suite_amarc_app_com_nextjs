@@ -3,9 +3,17 @@ import { resolveMasterValidityStatus } from "../helpers/masterValidity";
 import { MasterValidityChip } from "./MasterValidityChip";
 import type { MasterCommonRow } from "../types/masterCommonTypes";
 
-type Props = {
-    item: MasterCommonRow;
+type EmptyExtra = Record<never, never>;
+
+type MasterDetailRowProps = {
+    label: string;
+    value: React.ReactNode;
+};
+
+type Props<TExtra extends object =EmptyExtra> = {
+    item: MasterCommonRow<TExtra>;
     editHref: string;
+    renderExtraRows?: (item: MasterCommonRow<TExtra>) => React.ReactNode;
 };
 
 function formatDateTime(value: string | null): string {
@@ -19,10 +27,7 @@ function formatDateTime(value: string | null): string {
 function Row({
     label,
     value,
-}: {
-    label: string;
-    value: React.ReactNode;
-}) {
+}: MasterDetailRowProps) {
     return (
         <Box sx={{ p: 2 }}>
             <Stack spacing={1}>
@@ -36,13 +41,17 @@ function Row({
     );
 }
 
-export function MasterDetailBase({ item, editHref }: Props) {
+export function MasterDetailBase<TExtra extends object = EmptyExtra>({
+    item,
+    editHref,
+    renderExtraRows,
+}: Props<TExtra>) {
     const status = resolveMasterValidityStatus(item);
 
     return (
         <Stack spacing={2}>
             <Stack direction="row" justifyContent="space-between" alignItems="center">
-                <Typography variant="h6">{item.name}</Typography>
+                <Typography variant="h5" sx={{ fontWeight: "bold" }}>{item.name}</Typography>
 
                 <Button component={Link} href={editHref} variant="contained">
                     編集
@@ -63,6 +72,7 @@ export function MasterDetailBase({ item, editHref }: Props) {
                         <Grid size={{ xs: 12, md: 6 }}>
                             <Row label="表示順" value={item.sortOrder} />
                         </Grid>
+                        {renderExtraRows?.(item)}
                         <Grid size={{ xs: 12, md: 6 }}>
                             <Row label="備考" value={item.remarks || "-"} />
                         </Grid>

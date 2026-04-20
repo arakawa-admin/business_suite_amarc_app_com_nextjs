@@ -28,12 +28,23 @@ export default function ClientPageForAdmin() {
     const masters: Masters[]
     = [
         {
-            category: "資産管理システムマスタ",
+            category: "許認可",
             color: "success",
             items: [
                 {
                     title: "許認可カテゴリー",
-                    route: "permit-categories",
+                    route: "permit/permit-categories",
+                    icon: <GroupIcon />
+                },
+            ]
+        },
+        {
+            category: "車両",
+            color: "primary",
+            items: [
+                {
+                    title: "車両保険カテゴリー",
+                    route: "vehicle/vehicle-insurance-categories",
                     icon: <GroupIcon />
                 },
             ]

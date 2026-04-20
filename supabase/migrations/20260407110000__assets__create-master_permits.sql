@@ -26,7 +26,7 @@ create table if not exists assets.master_permit_categories (
     )
 );
 
-comment on table assets.master_permit_categories is '許認可分類マスタ';
+comment on table assets.master_permit_categories is '許認可カテゴリーマスタ';
 comment on column assets.master_permit_categories.id is '主キー';
 comment on column assets.master_permit_categories.code is '分類コード';
 comment on column assets.master_permit_categories.name is '分類名';

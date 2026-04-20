@@ -3,7 +3,7 @@ import { PermitForm } from "@/features/permits/components/permitForm";
 import { findCurrentStaffOrThrow } from "@/features/auth/repositories/currentStaffRepository";
 import { StaffSelectionRequiredError } from "@/features/auth/errors/authErrors";
 import { findPermitLabelOptions } from "@/features/permits/repositories/permitRepository";
-import { findPermitCategoryList } from "@/features/master/permit-categories/repositories/permitCategoryRepository";
+import { findPermitCategoryList } from "@/features/master/permit/permit-categories/repositories/permitCategoryRepository";
 import  { Box, Container, Stack } from "@mui/material";
 import AssetsBreadcrumbs from "@/components/common/layout/AssetsBreadcrumbs";
 

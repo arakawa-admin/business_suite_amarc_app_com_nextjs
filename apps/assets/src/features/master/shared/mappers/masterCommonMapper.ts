@@ -26,8 +26,13 @@ export function toMasterCommonInsertInput(
         code: input.code.trim(),
         name: input.name.trim(),
         sort_order: input.sortOrder,
-        remarks: input.remarks.trim() === "" ? null : input.remarks.trim(),
+        remarks: input.remarks ? input.remarks.trim() === "" ? null : input.remarks.trim() : null,
         valid_at: input.validAt,
         invalid_at: input.invalidAt,
     };
 }
+
+export const masterCommonMapper = {
+    toModel: toMasterCommonModel,
+    toInsertInput: toMasterCommonInsertInput,
+};

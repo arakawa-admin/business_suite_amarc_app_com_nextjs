@@ -1,6 +1,6 @@
 export type MasterValidityStatus = "upcoming" | "active" | "expired";
 
-export type MasterCommonRow = {
+export type MasterCommonRow<TExtra extends object = Record<never, never>> = {
     id: string;
     code: string;
     name: string;
@@ -10,16 +10,16 @@ export type MasterCommonRow = {
     invalidAt: string | null;
     createdAt: string;
     updatedAt: string;
-};
+} & TExtra;
 
-export type MasterCommonFormValues = {
+export type MasterCommonFormValues<TExtra extends object = Record<never, never>> = {
     code: string;
     name: string;
     sortOrder: number;
-    remarks: string;
+    remarks: string | null;
     validAt: string | null;
     invalidAt: string | null;
-};
+} & TExtra;
 
 export type MasterOption = {
     value: string;
@@ -48,4 +48,5 @@ export type MasterCommonDbInsert = {
 };
 
 export type MasterTableName =
-    | "master_permit_categories";
+    | "master_permit_categories"
+    | "master_vehicle_insurance_categories";

@@ -81,10 +81,10 @@ drop policy if exists "permits_insert_authenticated" on assets.permits;
 drop policy if exists "permits_update_authenticated" on assets.permits;
 drop policy if exists "permits_delete_authenticated" on assets.permits;
 
-drop policy if exists "permit_renewal_logs_select_authenticated" on assets.permit_renewal_logs;
-drop policy if exists "permit_renewal_logs_insert_authenticated" on assets.permit_renewal_logs;
-drop policy if exists "permit_renewal_logs_update_authenticated" on assets.permit_renewal_logs;
-drop policy if exists "permit_renewal_logs_delete_authenticated" on assets.permit_renewal_logs;
+-- drop policy if exists "permit_renewal_logs_select_authenticated" on assets.permit_renewal_logs;
+-- drop policy if exists "permit_renewal_logs_insert_authenticated" on assets.permit_renewal_logs;
+-- drop policy if exists "permit_renewal_logs_update_authenticated" on assets.permit_renewal_logs;
+-- drop policy if exists "permit_renewal_logs_delete_authenticated" on assets.permit_renewal_logs;
 
 drop policy if exists "vehicles_select_authenticated" on assets.vehicles;
 drop policy if exists "vehicles_insert_authenticated" on assets.vehicles;
@@ -326,33 +326,33 @@ for delete
 to authenticated
 using (true);
 
--- =========================================================
--- permit_renewal_logs
--- =========================================================
-create policy "permit_renewal_logs_select_authenticated"
-on assets.permit_renewal_logs
-for select
-to authenticated
-using (true);
+-- -- =========================================================
+-- -- permit_renewal_logs
+-- -- =========================================================
+-- create policy "permit_renewal_logs_select_authenticated"
+-- on assets.permit_renewal_logs
+-- for select
+-- to authenticated
+-- using (true);
 
-create policy "permit_renewal_logs_insert_authenticated"
-on assets.permit_renewal_logs
-for insert
-to authenticated
-with check (true);
+-- create policy "permit_renewal_logs_insert_authenticated"
+-- on assets.permit_renewal_logs
+-- for insert
+-- to authenticated
+-- with check (true);
 
-create policy "permit_renewal_logs_update_authenticated"
-on assets.permit_renewal_logs
-for update
-to authenticated
-using (true)
-with check (true);
+-- create policy "permit_renewal_logs_update_authenticated"
+-- on assets.permit_renewal_logs
+-- for update
+-- to authenticated
+-- using (true)
+-- with check (true);
 
-create policy "permit_renewal_logs_delete_authenticated"
-on assets.permit_renewal_logs
-for delete
-to authenticated
-using (true);
+-- create policy "permit_renewal_logs_delete_authenticated"
+-- on assets.permit_renewal_logs
+-- for delete
+-- to authenticated
+-- using (true);
 
 -- =========================================================
 -- vehicles

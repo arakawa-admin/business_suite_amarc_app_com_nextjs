@@ -6,7 +6,7 @@ import {
 } from "@/features/permits/repositories/permitRepository";
 import { mapPermitRowToFormValues } from "@/features/permits/mappers/permitMappers";
 import { findPermitLabelOptions } from "@/features/permits/repositories/permitRepository";
-import { findPermitCategoryList } from "@/features/master/permit-categories/repositories/permitCategoryRepository";
+import { findPermitCategoryList } from "@/features/master/permit/permit-categories/repositories/permitCategoryRepository";
 import { findLinkedAttachmentsByTarget } from "@/features/attachments/repositories/attachmentLinkRepository";
 import { createAttachmentViewUrl } from "@/features/attachments/repositories/attachmentViewRepository";
 
