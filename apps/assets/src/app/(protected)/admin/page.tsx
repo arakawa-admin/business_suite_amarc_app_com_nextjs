@@ -47,6 +47,11 @@ export default function ClientPageForAdmin() {
                     route: "vehicle/vehicle-insurance-categories",
                     icon: <GroupIcon />
                 },
+                {
+                    title: "車両保険契約先",
+                    route: "vehicle/vehicle-insurance-agencies",
+                    icon: <GroupIcon />
+                },
             ]
         },
     ]

@@ -33,7 +33,7 @@ export async function updatePermitCategoryAction(
             fieldErrors: {},
             formError: resolveMasterRepositoryErrorMessage(
                 error,
-                "車両保険カテゴリーの更新に失敗しました",
+                "許認可カテゴリーの更新に失敗しました",
             ),
         };
     }

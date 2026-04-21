@@ -32,7 +32,7 @@ export async function createPermitCategoryAction(
             fieldErrors: {},
             formError: resolveMasterRepositoryErrorMessage(
                 error,
-                "車両保険カテゴリーの作成に失敗しました",
+                "許認可カテゴリーの作成に失敗しました",
             ),
         };
     }
