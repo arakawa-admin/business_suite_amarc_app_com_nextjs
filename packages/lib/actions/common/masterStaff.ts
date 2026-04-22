@@ -3,7 +3,7 @@
 import {
     MasterStaffCreateInput,
     MasterStaffUpdatePayload,
-} from "@/schemas/common/masterStaffSchema";
+} from "../../../schemas/common/masterStaffSchema";
 
 import { revalidatePath } from "next/cache";
 
@@ -15,7 +15,7 @@ import {
     insertMasterStaff,
     updateMasterStaffById,
     updateMasterStaffInvalidAt,
-} from "@/lib/repositories/common/masterStaff.repository";
+} from "../../repositories/common/masterStaff.repository";
 
 export async function getMasterStaffs() {
     try {

@@ -3,7 +3,7 @@
 import {
     MasterLoginUserCreateInput,
     MasterLoginUserUpdatePayload,
-} from "@/schemas/common/masterLoginUserSchema";
+} from "../../../schemas/common/masterLoginUserSchema";
 
 import { subDays } from "date-fns";
 
@@ -16,7 +16,7 @@ import {
     insertMasterLoginUser,
     updateMasterLoginUserById,
     updateMasterLoginUserInvalidAt,
-} from "@/lib/repositories/common/masterLoginUser.repository";
+} from "../../repositories/common/masterLoginUser.repository";
 
 export async function getMasterLoginUsers() {
     try {

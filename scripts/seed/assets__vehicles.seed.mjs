@@ -3,353 +3,612 @@ import dotenv from "dotenv";
 dotenv.config({ path: ".env.local" });
 import { createClient } from "@supabase/supabase-js";
 
-const VALID_AT = "2026-01-01T00:00:00Z";
-const INVALID_AT = "2050-12-31T00:00:00Z";
+const RAW_ROWS = `
+福島100す1179,kitakata,いすゞ,フォワード,クレーン付,コープ
+福島11つ4914,kitakata,いすゞ,エルフ,平ボディ,コープ
+福島100は1979,kitakata,いすゞ,フォワード,クレーン付,コープ
+会津100さ1037,kitakata,三菱,ファイター,クレーン付,コープ
+会津100は178,kitakata,いすゞ,ギガ,ダンプ,コープ
+会津100さ1233,kitakata,いすゞ,フォワード,クレーン付,コープ
+福島130さ1607,kitakata,いすゞ,フォワード,脱着装置付コンテナ専用車,コープ
+会津100さ1907,kitakata,ニッサン,,コープ
+会津100は586,kitakata,いすゞ,,平ボディ,コープ
+会津480え9666,kitakata,スズキ,エブリィ,バン,コープ
+会津400す1588,kitakata,プロボックス,バン,コープ
+会津100は925,kitakata,日野,脱着装置付コンテナ専用車,コープ
+会津800は397,kitakata,いすゞ,,塵芥車,コープ
+福島800さ9437,kitakata,日デ,コンドル,塵芥車,三和倉庫
+会津100さ3340,kitakata,エルフ250,3ｔパワーゲート,三和倉庫
+会津100さ3713,kitakata,いすゞ,フォワード,脱着装置付コンテナ専用車,三和倉庫
+会津130せ70,kitakata,日野,ダンプ,アスク
+会津100ゆ9,machikita,,セミトレーラ,コープ
+会津100は986,machikita,クオン,トラクタ,コープ
+会津580え3060,machikita,ダイハツ,ミライース,箱型,コープ
+会津100は6,ichinoseki,いすゞ,フォワード,脱着装置付コンテナ専用車,コープ
+会津100は87,ichinoseki,日デ,クオン,クレーン付,コープ
+会津580え7986,ichinoseki,ダイハツ,箱型,コープ
+会津100は564,ichinoseki,三菱,ファイター,脱着装置付コンテナ専用車,コープ
+会津400す1591,ichinoseki,プロボックス,バン,コープ
+会津100さ4392,ichinoseki,いすゞ,キャブオーバー,コープ
+福島100さ457,ichinoseki,日デ,コンドル,クレーン付,三和倉庫
+会津100は643,ichinoseki,日野,アームロール車,アスク
+会津100は624,ichinoseki,UDトラックス,ヒアブ,アスク
+会津480え604,seibi,ニッサン,クリッパーバン,バン,三和倉庫
+会津100さ911,seibi,日野,キャブオーバー,アスク
+会津480あ4986,seibi,ニッサン,クリッパーバン,バン,アスク
+会津100は278,koji,UD,,コープ
+会津100さ1525,koji,いすゞ,,コープ
+会津100さ2267,koji,UD,ユニック付,コープ
+会津400す1073,koji,プロボックス,,コープ
+会津400す785,koji,トヨタ,プロボックスGL,箱型,コープ
+会津300ち9318,koji,セレナ,,コープ
+会津400さ709,koji,トヨタ,トヨエース,平ボディ,アスク
+会津480い9619,koji,スズキ,,アスク
+会津400さ7880,koji,ダイナ,,アスク
+会津100さ1608,kwc,トヨタ,,コープ
+会津800さ2733,kwc,ニッサン,塵芥車,アスク
+福島88す6832,kwc,いすゞ,エルフ,塵芥車,アスク
+会津400さ4157,koriyama,トヨタ,ハイエース,バン,アスク
+福島400せ5731,koriyama,トヨタ,サクシードバン,バン,アスク
+会津100は739,koriyama,日野,クレーン付,アスク
+会津100さ3585,koriyama,三菱キャンター,クレーン付,アスク
+会津100は783,koriyama,日野,脱着装置付コンテナ専用車,アスク
+会津100は850,koriyama,日野,トラクタ,アスク
+会津100ゆ14,koriyama,フルハーフ,コンテナセミトレーラ,アスク
+会津100は955,koriyama,いすゞ,増トンウイング車,アスク
+会津500つ6553,plastic,ヴィッツ,箱型,コープ
+会津100は689,bpo,三菱,ファイター,ウイング車,コープ
+会津480う659,compost,スバル,平ボディ,コープ
+会津美里町な323,compost,コマツ,フォークリフト,コープ
+会津100さ2108,compost,日野,デュトロ,アルミ箱車,ゲート付,コープ
+会津480か2066,compost,ミニキャブバン,バン,コープ
+会津300た8678,koriyama_branch,トヨタ,CH-R,箱型,アスク
+会津330ち5810,soumu,トヨタ,カムリ,箱型,コープ
+会津400さ8958,soumu,トヨタ,プロボックス,,コープ
+`;
+
+
+const VEHICLE_METADATA = {
+    "福島800さ9437": {
+        model: "KK-MK25A",
+        serialNumber: "MK25A06596",
+        firstRegisteredYm: "2003-09",
+    },
+    "福島100す1179": {
+        model: "ADG-FRR90K3S",
+        serialNumber: null,
+        firstRegisteredYm: "2006-01",
+    },
+    "福島11つ4914": {
+        model: "KC-NRR33H3",
+        serialNumber: null,
+        firstRegisteredYm: "1999-03",
+    },
+    "福島100は1979": {
+        model: "PJ-FTR34K4",
+        serialNumber: "FTR34K47000129",
+        firstRegisteredYm: "2006-04",
+    },
+    "会津100さ1037": {
+        model: "KK-FK61HK",
+        serialNumber: "FK61HK761310",
+        firstRegisteredYm: "2003-03",
+    },
+    "会津100は178": {
+        model: "LKG-CYZ77AM",
+        serialNumber: "CYZ77AM7000265",
+        firstRegisteredYm: "2012-03",
+    },
+    "会津100さ1233": {
+        model: "KK-FRR35K4",
+        serialNumber: "FRR35K47001597",
+        firstRegisteredYm: "2004-01",
+    },
+    "福島130さ1607": {
+        model: "PB-FRR35H3S",
+        serialNumber: null,
+        firstRegisteredYm: "2004-07",
+    },
+    "会津100さ1907": {
+        model: "KC-MK211HN",
+        serialNumber: "MK211HN00753",
+        firstRegisteredYm: "1996-03",
+    },
+    "会津130せ70": {
+        model: "QPG-FS1EPEA",
+        serialNumber: "FS1EPE-10436",
+        firstRegisteredYm: "2016-03",
+    },
+    "会津100は586": {
+        model: "2PG-CYH77C",
+        serialNumber: "CYH77C-7000071",
+        firstRegisteredYm: "2018-06",
+    },
+    "会津100さ3340": {
+        model: "NPR85AR",
+        serialNumber: "NPR85-7013438",
+        firstRegisteredYm: "2008-10",
+    },
+    "会津100さ3713": {
+        model: "2RG-FRR90S",
+        serialNumber: "FRR90-7173919",
+        firstRegisteredYm: "2021-09",
+    },
+    "会津480え9666": {
+        model: "5BD-DA17V",
+        serialNumber: "DA17V-655751",
+        firstRegisteredYm: "2022-12",
+    },
+    "会津400す1588": {
+        model: "3BE-NCP165V",
+        serialNumber: "NCP165-0124015",
+        firstRegisteredYm: "2024-05",
+    },
+    "会津100は925": {
+        model: "2PG-FJ2AECA",
+        serialNumber: "FJ2AECA",
+        firstRegisteredYm: "2010-06",
+    },
+    "会津800は397": {
+        model: "SPG-FSR90S2",
+        serialNumber: "FSR90-7004369",
+        firstRegisteredYm: "2015-02",
+    },
+    "会津580え3060": {
+        model: "DBA-LA300S",
+        serialNumber: "LA300S1094931",
+        firstRegisteredYm: "2012-05",
+    },
+    "会津100ゆ9": {
+        model: "TF36H2C3",
+        serialNumber: "TF36H2C3 83704",
+        firstRegisteredYm: "2016-01",
+    },
+    "会津100は986": {
+        model: "2DG-GW6EAH",
+        serialNumber: null,
+        firstRegisteredYm: "2025-12",
+    },
+    "福島100さ457": {
+        model: "KK-MK252HB",
+        serialNumber: "MK252H00271",
+        firstRegisteredYm: "1999-08",
+    },
+    "会津100は6": {
+        model: "PA-FSR34G4SZ",
+        serialNumber: null,
+        firstRegisteredYm: "2006-10",
+    },
+    "会津100は87": {
+        model: "BDG-PK36C",
+        serialNumber: "PK36C15121",
+        firstRegisteredYm: "2009-11",
+    },
+    "会津580え7986": {
+        model: "DBA-LA300S",
+        serialNumber: "LA300S-1143491",
+        firstRegisteredYm: "2013-03",
+    },
+    "会津100は564": {
+        model: "2KG-FK62FZ",
+        serialNumber: "FK62FZ-600058",
+        firstRegisteredYm: "2018-01",
+    },
+    "会津100は624": {
+        model: "2PG-CW5BL",
+        serialNumber: null,
+        firstRegisteredYm: "2019-02",
+    },
+    "会津400す1591": {
+        model: "3BE-NCP165V",
+        serialNumber: "NCP165-0123205",
+        firstRegisteredYm: "2024-05",
+    },
+    "会津100は643": {
+        model: "2KG-FS1EHA",
+        serialNumber: "FS1EH-100381",
+        firstRegisteredYm: "2019-01",
+    },
+    "会津100さ4392": {
+        model: "TPG-NKR85R",
+        serialNumber: null,
+        firstRegisteredYm: "2017-07",
+    },
+    "福島88す6832": {
+        model: "KC-NPS71GN",
+        serialNumber: "NPS71G7400066",
+        firstRegisteredYm: "1996-07",
+    },
+    "会津400さ4157": {
+        model: "KR-KDH205V",
+        serialNumber: "KDH205-5002666",
+        firstRegisteredYm: "2005-11",
+    },
+    "会津100さ1608": {
+        model: "TKG-XZU710",
+        serialNumber: "XZU710-0006788",
+        firstRegisteredYm: "2013-06",
+    },
+    "福島400せ5731": {
+        model: "UB-NCP55V",
+        serialNumber: "NCP550011185",
+        firstRegisteredYm: "2003-06",
+    },
+    "会津100さ3585": {
+        model: "2PG-FEB80",
+        serialNumber: null,
+        firstRegisteredYm: "2021-01",
+    },
+    "会津100は739": {
+        model: null,
+        serialNumber: null,
+        firstRegisteredYm: "2021-01",
+    },
+    "会津800さ2733": {
+        model: "KK-MK25A",
+        serialNumber: "MK25A04213",
+        firstRegisteredYm: "2003-12",
+    },
+    "会津100は783": {
+        model: "2KG-FS1EHA",
+        serialNumber: "FS1EH-100992",
+        firstRegisteredYm: "2020-12",
+    },
+    "会津100ゆ14": {
+        model: "KFKGG340",
+        serialNumber: "KFKGG340-73690",
+        firstRegisteredYm: "2011-05",
+    },
+    "会津100は850": {
+        model: "QPG-GK5XAB",
+        serialNumber: null,
+        firstRegisteredYm: "2018-03",
+    },
+    "会津480か2066": {
+        model: "EBD-DS17V",
+        serialNumber: "DS17V-800071",
+        firstRegisteredYm: "2015-04",
+    },
+    "会津100は955": {
+        model: "LPG-FTR90S2",
+        serialNumber: "FTR90-7004552",
+        firstRegisteredYm: "2015-09",
+    },
+    "会津400さ709": {
+        model: "KR-KDY280",
+        serialNumber: "KDY2800015918",
+        firstRegisteredYm: "2007-05",
+    },
+    "会津480あ4986": {
+        model: "GBD-U72V",
+        serialNumber: "U72V0402953",
+        firstRegisteredYm: "2008-07",
+    },
+    "会津100は278": {
+        model: "QDG-PW39L",
+        serialNumber: "PW39L-20183",
+        firstRegisteredYm: "2013-09",
+    },
+    "会津480い9619": {
+        model: "HBD-DA64V",
+        serialNumber: "DA64V-832001",
+        firstRegisteredYm: "2014-03",
+    },
+    "会津100さ2267": {
+        model: "TKG-MK38L",
+        serialNumber: "MK38L-32105",
+        firstRegisteredYm: "2015-09",
+    },
+    "会津400す1073": {
+        model: "",
+        serialNumber: "NCP165-0110629",
+        firstRegisteredYm: "2023-05",
+    },
+    "会津100は689": {
+        model: "TKG-FK65FY",
+        serialNumber: "FK65FY-580059",
+        firstRegisteredYm: "2013-10",
+    },
+    "会津330ち5810": {
+        model: "6AA-AXVH75",
+        serialNumber: "AXVH75-1004061",
+        firstRegisteredYm: "2022-01",
+    },
+    "会津400さ8958": {
+        model: "DBE－NCP55V",
+        serialNumber: "NCP55－0102144",
+        firstRegisteredYm: "2012-08",
+    },
+    "会津300た8678": {
+        model: "3BA-NGX50",
+        serialNumber: "NGX50-2040329",
+        firstRegisteredYm: "2022-01",
+    },
+    "会津300わ353": {
+        model: "ZVW30",
+        serialNumber: "ZVW30-1811360",
+        firstRegisteredYm: "2017-03",
+    },
+};
+
+function parseYearMonthToFirstDay(value) {
+    if (!value) return null;
+
+    const [year, month] = value.split("-").map(Number);
+    if (!year || !month) return null;
+
+    return new Date(year, month - 1, 1);
+}
+
+function formatDateToYmd(date) {
+    const yyyy = date.getFullYear();
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    const dd = String(date.getDate()).padStart(2, "0");
+    return `${yyyy}-${mm}-${dd}`;
+}
+
+function startOfToday() {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+}
+
+function buildVehicleInspectionReminders(firstRegisteredYm, endYear = 2050) {
+    const baseDate = parseYearMonthToFirstDay(firstRegisteredYm);
+    if (!baseDate) return [];
+
+    const today = startOfToday();
+    const reminders = [];
+
+    // 初回3年後、その後2年ごと => 3,5,7,9...
+    for (let offsetYears = 3; ; offsetYears += 2) {
+        const dueDate = new Date(
+            baseDate.getFullYear() + offsetYears,
+            baseDate.getMonth(),
+            1
+        );
+
+        if (dueDate.getFullYear() > endYear) {
+            break;
+        }
+
+        if (dueDate < today) {
+            continue;
+        }
+
+        const alertDate = new Date(
+            dueDate.getFullYear(),
+            dueDate.getMonth() - 3,
+            1
+        );
+
+        reminders.push({
+            due_on: formatDateToYmd(dueDate),
+            alert_on: formatDateToYmd(alertDate),
+        });
+    }
+
+    return reminders;
+}
 
 function normalizeText(value) {
     if (value == null) return null;
-    const normalized = String(value)
-        .replace(/\r\n/g, "\n")
-        .replace(/\r/g, "\n")
-        .replace(/[ \t]+/g, " ")
-        .replace(/\n+/g, " ")
-        .trim();
-
-    if (!normalized || normalized === "－" || normalized === "-") {
-        return null;
-    }
-
-    return normalized;
+    const normalized = String(value).trim();
+    return normalized === "" ? null : normalized;
 }
 
-function buildAgencyRemarks({ insurancePeriod, remarks }) {
-    const lines = [];
-    const normalizedInsurancePeriod = normalizeText(insurancePeriod);
-    const normalizedRemarks = normalizeText(remarks);
-
-    if (normalizedInsurancePeriod) {
-        lines.push(`保険期間: ${normalizedInsurancePeriod}`);
+function parseVehicleRow(line) {
+    const parts = line.split(",").map((v) => v.trim());
+    if (parts.length < 5) {
+        throw new Error(`列数不足のため解析できません: ${line}`);
     }
 
-    if (normalizedRemarks) {
-        lines.push(normalizedRemarks);
+    const registrationNumber = parts[0];
+    const departmentCode = parts[1];
+    const manufacturerName = normalizeText(parts[2]);
+    const agencyLabel = parts[parts.length - 1];
+    const middle = parts.slice(3, -1);
+
+    let vehicleName = "";
+    let typeName = "";
+
+    if (middle.length === 0) {
+        vehicleName = "";
+        typeName = "";
+    } else if (middle.length === 1) {
+        // 5列行は「車名が空で、タイプだけがある」と解釈
+        vehicleName = "";
+        typeName = middle[0];
+    } else {
+        vehicleName = middle[0] ?? "";
+        typeName = middle.slice(1).join(",");
     }
 
-    return lines.length > 0 ? lines.join("\n") : null;
+    return {
+        registrationNumber,
+        departmentCode,
+        manufacturerName,
+        vehicleName: normalizeText(vehicleName),
+        typeName: normalizeText(typeName),
+        agencyLabel,
+    };
 }
 
-export async function seedMasterVehicleInsuranceCategories() {
+function resolveAgencyCompanyName(label) {
+    switch (label) {
+        case "コープ":
+            return "三井住友海上";
+        case "アスク":
+            return "東京海上日動火災";
+        case "三和倉庫":
+            return "あいおいニッセイ";
+        default:
+            throw new Error(`未対応の代理店ラベルです: ${label}`);
+    }
+}
+
+export async function seedVehicles() {
     const supabase = createClient(
         process.env.SUPABASE_URL,
-        process.env.SUPABASE_SERVICE_ROLE_KEY,
+        process.env.SUPABASE_SERVICE_ROLE_KEY
     );
 
     const assets = supabase.schema("assets");
+    const common = supabase.schema("common");
 
+    // 既存データ削除（全部）
     {
         const { error } = await assets
-            .from("master_vehicle_insurance_categories")
+            .from("vehicles")
             .delete()
             .neq("id", "00000000-0000-0000-0000-000000000000");
+
         if (error) {
-            console.error(
-                "Delete master_vehicle_insurance_categories error:",
-                error,
-            );
+            console.error("Delete vehicles error:", error);
             throw error;
         }
     }
 
-    const categories = [
-        {
-            code: "vehicle_insurance",
-            name: "自動車保険",
-            sort_order: 100,
-            update_note: `【定期更新】
-①自動車保険一覧を全事業部に送り、車両の有無・保有事業部・不足等確認していただく
-②担当者より更新時期前に保険料見積書と内容の変更提案あり
-③事業部確認後の一覧と見積の車両が合っているか確認
-③担当者より受けた内容を説明し、社長がプラン等決定
-④保険申込書対応
-⑤保険証券が届いたら、見積時の金額と確認
-⑥自動車保険一覧を更新し、各事業部・経理担当へ連絡
-【新規申込】
-①加入保険会社（代理店）を社長に確認。車両保険の有無も社長・事業部長に確認
-②車検証・注文書・請求書を送付し、加入日を伝える
-③保険申込書対応し、会社控えの写しを経理担当者へ
-④保険証券が届いたら写しを経理担当者へ
-【解約申込】
-①解約日を担当者へ連絡
-②解約申込対応
-③戻しの保険料の案内を経理担当者へ`,
-            accident_internal_note: `【保険会社対応】
-①担当者へ事故の第一報
-②事故報告書・写真・運転者とお相手の情報を連絡
-※アスクのみ「あんしんFAX自動車事故受付票」を作成・送信しないと事故受付されない
-③担当者からの質問事項対応`,
-            accident_external_note: `【事業部対応】
-①対象車両・状況・お相手情報確認
-②補償内容確認し事業部長へ連絡。車両保険使用しての修理かなど確認。
-③事故報告書至急対応依頼。`,
-        },
-        {
-            code: "facility_liability_insurance",
-            name: "施設賠償責任保険",
-            sort_order: 200,
-            update_note: `①前期売上高を担当者へ連絡
-②見積書確認、社長決裁
-③保険申込対応
-④前期施設賠償責任保険使用の事故件数確認し、経費案分一覧を作成
-　全事業部・経理担当者へ連絡`,
-            accident_internal_note: `【保険会社対応】
-①担当者へ事故の第一報
-②事故報告書・写真・お相手の情報を連絡
-③担当者からの質問事項対応
-④保険金請求対応`,
-            accident_external_note: `【事業部対応】
-①状況・お相手情報確認
-②事故報告書至急対応依頼`,
-        },
-        {
-            code: "occupational_accident_insurance",
-            name: "業務災害補償保険",
-            sort_order: 300,
-            update_note: `①前期売上高を担当者へ連絡
-②見積書確認、社長決裁
-③保険申込対応
-④保険料を経理担当者へ`,
-            accident_internal_note: `【保険会社対応】
-①担当者へ事故の第一報
-②事故報告書・写真・お相手の情報を連絡
-③担当者からの質問事項対応
-④保険金請求対応`,
-            accident_external_note: `【事業部対応】
-①状況確認
-②事故報告書至急対応依頼`,
-        },
-        {
-            code: "fire_insurance",
-            name: "火災保険保険",
-            sort_order: 400,
-            update_note: `①保険対象事業所での増減確認・保険会社へ連絡
-②見積書確認、社長決裁
-③保険申込対応
-④保険内容・保険料を個社と対象事業部、経理担当者へ連絡`,
-            accident_internal_note: `【保険会社対応】
-①担当者へ事故の第一報
-②事故報告書・写真等の情報を連絡
-③担当者からの質問事項対応
-④保険金請求対応`,
-            accident_external_note: `【事業部対応】
-①状況確認
-②事故報告書至急対応依頼`,
-        },
-        {
-            code: "information_leakage_insurance",
-            name: "情報漏洩保険",
-            sort_order: 500,
-            update_note: `①確認シートを担当者へ提出
-②見積書確認、社長決裁
-③保険申込対応
-④保険料を経理担当者へ`,
-            accident_internal_note: `【保険会社対応】
-①担当者へ事故の第一報
-②指示に従い対応`,
-            accident_external_note: "",
-        },
-    ];
-
-    for (const category of categories) {
-        const payload = {
-            id: uuidv4(),
-            code: category.code,
-            name: category.name,
-            sort_order: category.sort_order,
-            remarks: null,
-            update_note: normalizeText(category.update_note),
-            accident_internal_note: normalizeText(
-                category.accident_internal_note,
-            ),
-            accident_external_note: normalizeText(
-                category.accident_external_note,
-            ),
-            valid_at: VALID_AT,
-            invalid_at: INVALID_AT,
-        };
-
-        const { error } = await assets
-            .from("master_vehicle_insurance_categories")
-            .insert([payload]);
-        if (error) {
-            console.error(
-                "Insert master_vehicle_insurance_categories error:",
-                error,
-            );
-            throw error;
-        }
-    }
-
-    console.log("master_vehicle_insurance_categories seeded successfully!");
-}
-
-export async function seedMasterVehicleInsuranceAgencies() {
-    const supabase = createClient(
-        process.env.SUPABASE_URL,
-        process.env.SUPABASE_SERVICE_ROLE_KEY,
-    );
-
-    const assets = supabase.schema("assets");
-
-    {
-        const { error } = await assets
-            .from("master_vehicle_insurance_agencies")
-            .delete()
-            .neq("id", "00000000-0000-0000-0000-000000000000");
-        if (error) {
-            console.error(
-                "Delete master_vehicle_insurance_agencies error:",
-                error,
-            );
-            throw error;
-        }
-    }
-
-    const { data: categoryRows, error: categoryError } = await assets
-        .from("master_vehicle_insurance_categories")
+    // 部門一覧
+    const { data: departments, error: depError } = await common
+        .from("master_departments")
         .select("id, code");
-    if (categoryError) {
-        console.error(
-            "Select master_vehicle_insurance_categories error:",
-            categoryError,
-        );
-        throw categoryError;
+    if (depError) {
+        console.error("Error fetching master_departments:", depError.message);
+        throw depError;
+    }
+    if (!departments?.length) {
+        throw new Error("master_departments にデータがありません。");
     }
 
-    const categoryIdByCode = new Map(
-        (categoryRows ?? []).map((row) => [row.code, row.id]),
-    );
-
-    const agencies = [
-        {
-            insurance_category_code: "vehicle_insurance",
-            insurance_company_name: "三井住友海上",
-            agency_name: "㈲あいづ協同サービス",
-            contact_person_name: "小寺 秀一",
-            mobile_phone: "080-4058-4241",
-            tel: "0241-22-7171",
-            fax: "0241-22-0865",
-            insurance_period: "1/1～翌年1/1",
-            remarks: "",
-        },
-        {
-            insurance_category_code: "vehicle_insurance",
-            insurance_company_name: "東京海上日動火災",
-            agency_name: "㈱アスク",
-            contact_person_name: "安斎 彰広",
-            mobile_phone: "090-0996-6701",
-            tel: "0243-22-0555",
-            fax: "0243-22-2100",
-            insurance_period: "1/1～翌年1/1",
-            remarks: "",
-        },
-        {
-            insurance_category_code: "vehicle_insurance",
-            insurance_company_name: "あいおいニッセイ",
-            agency_name: "三和倉庫㈱",
-            contact_person_name: "伊藤 真人",
-            mobile_phone: null,
-            tel: "03-3578-3008",
-            fax: null,
-            insurance_period: "1/1～翌年1/1",
-            remarks: "",
-        },
-        {
-            insurance_category_code: "facility_liability_insurance",
-            insurance_company_name: "三井住友海上",
-            agency_name: "㈲あいづ協同サービス",
-            contact_person_name: "小寺 秀一",
-            mobile_phone: "080-4058-4241",
-            tel: "0241-22-7171",
-            fax: "0241-22-0865",
-            insurance_period: "12/21～翌年12/21",
-            remarks:
-                "https://www.ms-ins.com/pdf/business/indemnity/biz-protector-ci.pdf",
-        },
-        {
-            insurance_category_code: "occupational_accident_insurance",
-            insurance_company_name: "三井住友海上",
-            agency_name: "㈲あいづ協同サービス",
-            contact_person_name: "小寺 秀一",
-            mobile_phone: "080-4058-4241",
-            tel: "0241-22-7171",
-            fax: "0241-22-0865",
-            insurance_period: "1/1～翌年1/1",
-            remarks: "https://www.ms-ins.com/pdf/business/employee/j-next.pdf",
-        },
-        {
-            insurance_category_code: "fire_insurance",
-            insurance_company_name: "三井住友海上",
-            agency_name: "㈲あいづ協同サービス",
-            contact_person_name: "小寺 秀一",
-            mobile_phone: "080-4058-4241",
-            tel: "0241-22-7171",
-            fax: "0241-22-0865",
-            insurance_period: "8/1～翌年8/1",
-            remarks: "",
-        },
-        {
-            insurance_category_code: "information_leakage_insurance",
-            insurance_company_name: "全国商工会議所",
-            agency_name: "㈱アスク",
-            contact_person_name: "安斎 彰広",
-            mobile_phone: "090-0996-6701",
-            tel: "0243-22-0555",
-            fax: "0243-22-2100",
-            insurance_period: "3/1～翌年3/1",
-            remarks: "",
-        },
-    ];
-
-    for (const agency of agencies) {
-        const insuranceCategoryId = categoryIdByCode.get(
-            agency.insurance_category_code,
+    // 保険カテゴリ一覧
+    const { data: categories, error: catError } = await assets
+        .from("master_insurance_categories")
+        .select("id, code");
+    if (catError) {
+        console.error(
+            "Error fetching master_insurance_categories:",
+            catError.message
         );
-        if (!insuranceCategoryId) {
+        throw catError;
+    }
+    if (!categories?.length) {
+        throw new Error(
+            "master_insurance_categories にデータがありません。"
+        );
+    }
+
+    const vehicleInsuranceCategory = categories.find(
+        (c) => c.code === "vehicle_insurance"
+    );
+    if (!vehicleInsuranceCategory) {
+        throw new Error(
+            'insurance_category_code = "vehicle_insurance" のカテゴリが見つかりません。'
+        );
+    }
+
+    // 保険契約先一覧
+    const { data: agencies, error: agencyError } = await assets
+        .from("master_insurance_agencies")
+        .select("id, insurance_category_id, insurance_company_name");
+    if (agencyError) {
+        console.error(
+            "Error fetching master_insurance_agencies:",
+            agencyError.message
+        );
+        throw agencyError;
+    }
+    if (!agencies?.length) {
+        throw new Error("master_insurance_agencies にデータがありません。");
+    }
+
+    const lines = RAW_ROWS.split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean);
+
+    const vehicles = lines.map(parseVehicleRow);
+
+    for (const item of vehicles) {
+        const department = departments.find((d) => d.code === item.departmentCode);
+        if (!department) {
             throw new Error(
-                `insurance_category_code=${agency.insurance_category_code} に対応するカテゴリが存在しません。先に seedMasterVehicleInsuranceCategories() を実行してください。`,
+                `department code が見つかりません: ${item.departmentCode}`
             );
         }
+
+        const insuranceCompanyName = resolveAgencyCompanyName(item.agencyLabel);
+        const agency = agencies.find(
+            (a) =>
+                a.insurance_category_id === vehicleInsuranceCategory.id &&
+                a.insurance_company_name === insuranceCompanyName
+        );
+
+        if (!agency) {
+            throw new Error(
+                `代理店が見つかりません: label=${item.agencyLabel}, insurance_company_name=${insuranceCompanyName}`
+            );
+        }
+
+        const metadata = VEHICLE_METADATA[item.registrationNumber] ?? {
+            model: null,
+            serialNumber: null,
+            firstRegisteredYm: null,
+            reminders: [],
+        };
 
         const payload = {
             id: uuidv4(),
-            insurance_category_id: insuranceCategoryId,
-            insurance_company_name: normalizeText(
-                agency.insurance_company_name,
-            ),
-            agency_name: normalizeText(agency.agency_name),
-            contact_person_name: normalizeText(agency.contact_person_name),
-            mobile_phone: normalizeText(agency.mobile_phone),
-            tel: normalizeText(agency.tel),
-            fax: normalizeText(agency.fax),
-            remarks: buildAgencyRemarks({
-                insurancePeriod: agency.insurance_period,
-                remarks: agency.remarks,
-            }),
-            valid_at: VALID_AT,
-            invalid_at: INVALID_AT,
+            registration_number: item.registrationNumber,
+            department_id: department.id,
+            manufacturer_name: item.manufacturerName,
+            vehicle_name: item.vehicleName,
+            type_name: item.typeName,
+            model: metadata.model,
+            serial_number: metadata.serialNumber,
+            first_registered_ym: metadata.firstRegisteredYm,
+            owner_name: null,
+            is_fixed_asset: false,
+            is_registered: true,
+            voluntary_insurance_agency_id: agency.id,
+            // compulsory_insurance_agency_name: null,
+            note: null,
         };
 
-        const { error } = await assets
-            .from("master_vehicle_insurance_agencies")
-            .insert([payload]);
+        const { error } = await assets.from("vehicles").insert([payload]);
+
         if (error) {
-            console.error(
-                "Insert master_vehicle_insurance_agencies error:",
-                error,
-            );
+            console.error("Insert vehicles error:", error, payload);
             throw error;
+        }
+
+        const vehicleId = payload.id;
+
+        // VEHICLE_METADATA.reminders があればそれを優先、なければ firstRegisteredYm から自動生成
+        const inspectionReminders =
+            metadata.reminders?.length
+                ? metadata.reminders
+                : buildVehicleInspectionReminders(metadata.firstRegisteredYm);
+
+        for (const r of inspectionReminders) {
+            const reminderPayload = {
+                target_type: "vehicle",
+                target_id: vehicleId,
+                reminder_type_code: "vehicle_inspection_expiry",
+                reminder_type_name: "車検満了日",
+                due_on: r.due_on,
+                alert_on: r.alert_on,
+                completed_on: null,
+            };
+
+            const { error: reminderErr } = await assets
+                .from("reminders")
+                .insert([reminderPayload]);
+
+            if (reminderErr) {
+                console.error("Insert reminders error:", reminderErr, reminderPayload);
+                throw reminderErr;
+            }
         }
     }
 
-    console.log("master_vehicle_insurance_agencies seeded successfully!");
+    console.log("vehicles seeded successfully!");
 }

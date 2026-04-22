@@ -8,6 +8,7 @@
       "@schemas/*": ["../../packages/schemas/*"],
       "@supabase-shared/*": ["../../packages/supabase-shared/*"],
       "@cloudflare/*": ["../../packages/cloudflare/*"],
+      "@lib/*": ["../../packages/lib/*"],
       "@types/*": ["../../packages/db-types/*"]
     }
   },

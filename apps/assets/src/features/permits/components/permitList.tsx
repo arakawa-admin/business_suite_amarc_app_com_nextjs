@@ -17,7 +17,7 @@ import { PermitListFilter } from "./permitListFilter";
 
 import type { PermitListRow } from "../types/permitTypes";
 import AssetsBreadcrumbs from "@/components/common/layout/AssetsBreadcrumbs";
-import { PermitCsvExportButton } from "@/features/permits/components/PermitCsvExportButton";
+import { PermitCsvExportButton } from "@/features/permits/components/permitCsvExportButton";
 import AddIcon from '@mui/icons-material/Add';
 
 type CategoryOption = {

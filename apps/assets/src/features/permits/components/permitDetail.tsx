@@ -34,12 +34,12 @@ import { type CommentListItem } from "@/features/permits/comments/repositories/c
 import { PermitCommentRegisterButton } from "@/features/permits/comments/components/PermitCommentRegisterButton";
 import { ReminderCommentRegisterButton } from "@/features/permits/comments/components/ReminderCommentRegisterButton";
 
-type PermitReminderViewRowWithComment = PermitReminderViewRow & {
-    comments: CommentListItem[];
-}
+// type PermitReminderViewRowWithComment = PermitReminderViewRow & {
+//     comments: CommentListItem[];
+// }
 type Props = {
     permit: PermitDetailRow;
-    reminders: PermitReminderViewRowWithComment[];
+    reminders: PermitReminderViewRow[];
     attachments: AttachmentFormItem[];
     comments: CommentListItem[];
     showHardDeleteButton?: boolean;

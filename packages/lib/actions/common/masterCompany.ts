@@ -3,7 +3,7 @@
 import {
     MasterCompanyCreateInput,
     MasterCompanyUpdatePayload,
-} from "@/schemas/common/masterCompanySchema";
+} from "../../../schemas/common/masterCompanySchema";
 
 import { subDays } from "date-fns";
 
@@ -16,7 +16,7 @@ import {
     insertMasterCompany,
     updateMasterCompanyById,
     updateMasterCompanyInvalidAt,
-} from "@/lib/repositories/common/masterCompany.repository";
+} from "../../repositories/common/masterCompany.repository";
 
 export async function getMasterCompanys() {
     try {

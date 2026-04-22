@@ -35,8 +35,8 @@ alter table assets.audit_logs enable row level security;
 alter table assets.permits enable row level security;
 -- alter table assets.permit_renewal_logs enable row level security;
 alter table assets.vehicles enable row level security;
-alter table assets.master_vehicle_insurance_agencies enable row level security;
-alter table assets.master_vehicle_insurance_categories enable row level security;
+alter table assets.master_insurance_agencies enable row level security;
+alter table assets.master_insurance_categories enable row level security;
 
 -- =========================================================
 -- drop old policies
@@ -91,15 +91,15 @@ drop policy if exists "vehicles_insert_authenticated" on assets.vehicles;
 drop policy if exists "vehicles_update_authenticated" on assets.vehicles;
 drop policy if exists "vehicles_delete_authenticated" on assets.vehicles;
 
-drop policy if exists "master_vehicle_insurance_agencies_select_authenticated" on assets.master_vehicle_insurance_agencies;
-drop policy if exists "master_vehicle_insurance_agencies_insert_authenticated" on assets.master_vehicle_insurance_agencies;
-drop policy if exists "master_vehicle_insurance_agencies_update_authenticated" on assets.master_vehicle_insurance_agencies;
-drop policy if exists "master_vehicle_insurance_agencies_delete_authenticated" on assets.master_vehicle_insurance_agencies;
+drop policy if exists "master_insurance_agencies_select_authenticated" on assets.master_insurance_agencies;
+drop policy if exists "master_insurance_agencies_insert_authenticated" on assets.master_insurance_agencies;
+drop policy if exists "master_insurance_agencies_update_authenticated" on assets.master_insurance_agencies;
+drop policy if exists "master_insurance_agencies_delete_authenticated" on assets.master_insurance_agencies;
 
-drop policy if exists "master_vehicle_insurance_categories_select_authenticated" on assets.master_vehicle_insurance_categories;
-drop policy if exists "master_vehicle_insurance_categories_insert_authenticated" on assets.master_vehicle_insurance_categories;
-drop policy if exists "master_vehicle_insurance_categories_update_authenticated" on assets.master_vehicle_insurance_categories;
-drop policy if exists "master_vehicle_insurance_categories_delete_authenticated" on assets.master_vehicle_insurance_categories;
+drop policy if exists "master_insurance_categories_select_authenticated" on assets.master_insurance_categories;
+drop policy if exists "master_insurance_categories_insert_authenticated" on assets.master_insurance_categories;
+drop policy if exists "master_insurance_categories_update_authenticated" on assets.master_insurance_categories;
+drop policy if exists "master_insurance_categories_delete_authenticated" on assets.master_insurance_categories;
 
 -- =========================================================
 -- attachments
@@ -385,55 +385,55 @@ using (true);
 -- =========================================================
 -- vehicle_insurances
 -- =========================================================
-create policy "master_vehicle_insurance_agencies_select_authenticated"
-on assets.master_vehicle_insurance_agencies
+create policy "master_insurance_agencies_select_authenticated"
+on assets.master_insurance_agencies
 for select
 to authenticated
 using (true);
 
-create policy "master_vehicle_insurance_agencies_insert_authenticated"
-on assets.master_vehicle_insurance_agencies
+create policy "master_insurance_agencies_insert_authenticated"
+on assets.master_insurance_agencies
 for insert
 to authenticated
 with check (true);
 
-create policy "master_vehicle_insurance_agencies_update_authenticated"
-on assets.master_vehicle_insurance_agencies
+create policy "master_insurance_agencies_update_authenticated"
+on assets.master_insurance_agencies
 for update
 to authenticated
 using (true)
 with check (true);
 
-create policy "master_vehicle_insurance_agencies_delete_authenticated"
-on assets.master_vehicle_insurance_agencies
+create policy "master_insurance_agencies_delete_authenticated"
+on assets.master_insurance_agencies
 for delete
 to authenticated
 using (true);
 
 -- =========================================================
--- master_vehicle_insurance_categories
+-- master_insurance_categories
 -- =========================================================
-create policy "master_vehicle_insurance_categories_select_authenticated"
-on assets.master_vehicle_insurance_categories
+create policy "master_insurance_categories_select_authenticated"
+on assets.master_insurance_categories
 for select
 to authenticated
 using (true);
 
-create policy "master_vehicle_insurance_categories_insert_authenticated"
-on assets.master_vehicle_insurance_categories
+create policy "master_insurance_categories_insert_authenticated"
+on assets.master_insurance_categories
 for insert
 to authenticated
 with check (true);
 
-create policy "master_vehicle_insurance_categories_update_authenticated"
-on assets.master_vehicle_insurance_categories
+create policy "master_insurance_categories_update_authenticated"
+on assets.master_insurance_categories
 for update
 to authenticated
 using (true)
 with check (true);
 
-create policy "master_vehicle_insurance_categories_delete_authenticated"
-on assets.master_vehicle_insurance_categories
+create policy "master_insurance_categories_delete_authenticated"
+on assets.master_insurance_categories
 for delete
 to authenticated
 using (true);

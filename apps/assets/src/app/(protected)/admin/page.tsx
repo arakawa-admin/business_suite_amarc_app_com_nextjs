@@ -28,28 +28,28 @@ export default function ClientPageForAdmin() {
     const masters: Masters[]
     = [
         {
+            category: "共通",
+            color: "primary",
+            items: [
+                {
+                    title: "保険カテゴリー",
+                    route: "common/insurance-categories",
+                    icon: <GroupIcon />
+                },
+                {
+                    title: "保険契約先",
+                    route: "common/insurance-agencies",
+                    icon: <GroupIcon />
+                },
+            ]
+        },
+        {
             category: "許認可",
             color: "success",
             items: [
                 {
                     title: "許認可カテゴリー",
                     route: "permit/permit-categories",
-                    icon: <GroupIcon />
-                },
-            ]
-        },
-        {
-            category: "車両",
-            color: "primary",
-            items: [
-                {
-                    title: "車両保険カテゴリー",
-                    route: "vehicle/vehicle-insurance-categories",
-                    icon: <GroupIcon />
-                },
-                {
-                    title: "車両保険契約先",
-                    route: "vehicle/vehicle-insurance-agencies",
                     icon: <GroupIcon />
                 },
             ]

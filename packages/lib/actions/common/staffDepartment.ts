@@ -3,7 +3,7 @@
 import {
     StaffDepartmentCreateInput,
     StaffDepartmentUpdatePayload,
-} from "@/schemas/common/staffDepartmentSchema";
+} from "../../../schemas/common/staffDepartmentSchema";
 
 import { revalidatePath } from "next/cache";
 
@@ -16,7 +16,7 @@ import {
     updateStaffDepartmentById,
     updateStaffAndDepartmentById,
     updateStaffDepartmentInvalidAt,
-} from "@/lib/repositories/common/staffDepartment.repository";
+} from "../../repositories/common/staffDepartment.repository";
 
 export async function getStaffDepartments() {
     return await fetchStaffDepartments();

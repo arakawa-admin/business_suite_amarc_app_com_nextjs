@@ -18,7 +18,9 @@ import { seedMasterFormApproverAndViewers } from './apply__master_form_approver_
 import { seedMasterPermitCategories } from './assets__master_permits.seed.mjs';
 import { seedPermits } from './assets__permits.seed.mjs';
 
-import { seedMasterVehicleInsuranceAgencies, seedMasterVehicleInsuranceCategories } from './assets__vehicles.seed.mjs';
+import { seedClearAssets } from './assets__clears.seed.mjs';
+import { seedMasterInsuranceAgencies, seedMasterInsuranceCategories } from './assets__masters.seed.mjs';
+import { seedVehicles } from './assets__vehicles.seed.mjs';
 
 const projectRef = process.env.SUPABASE_PROJECT_REF;
 
@@ -30,31 +32,34 @@ if ((projectRef) !== answer.trim()) {
 
 (async () => {
   try {
-    // --- common
-    await seedMasterUsers();
-    await seedMasterCompanys();
-    await seedMasterDepartments();
-    await seedUserDepartments();
+    // // --- common
+    // await seedMasterUsers();
+    // await seedMasterCompanys();
+    // await seedMasterDepartments();
+    // await seedUserDepartments();
 
-    // --- approval
-    await seedMasterStatus();
-    await seedMasterDepartmentApproverAndReviewers();
+    // // --- approval
+    // await seedMasterStatus();
+    // await seedMasterDepartmentApproverAndReviewers();
 
-    // --- apply
-    await seedMasterEmployTypes();
-    await seedMasterStaffOptions();
-    await seedApplyMasterStatus();
-    await seedApplyForms();
-    await seedMasterFormApproverAndViewers();
+    // // --- apply
+    // await seedMasterEmployTypes();
+    // await seedMasterStaffOptions();
+    // await seedApplyMasterStatus();
+    // await seedApplyForms();
+    // await seedMasterFormApproverAndViewers();
 
     // --- assets
-    // - permits
-    await seedMasterPermitCategories();
-    await seedPermits();
+    await seedClearAssets();
+
+    // // - permits
+    // await seedMasterPermitCategories();
+    // await seedPermits();
 
     // - vehicles
-    await seedMasterVehicleInsuranceCategories();
-    await seedMasterVehicleInsuranceAgencies();
+    await seedMasterInsuranceCategories();
+    await seedMasterInsuranceAgencies();
+    await seedVehicles();
 
     console.log('Seed completed.');
     process.exit(0);

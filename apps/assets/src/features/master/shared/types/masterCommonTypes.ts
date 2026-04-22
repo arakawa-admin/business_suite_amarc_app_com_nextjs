@@ -49,5 +49,5 @@ export type MasterCommonDbInsert = {
 
 export type MasterTableName =
     | "master_permit_categories"
-    | "master_vehicle_insurance_categories"
-    | "master_vehicle_insurance_agencies";
+    | "master_insurance_categories"
+    | "master_insurance_agencies";

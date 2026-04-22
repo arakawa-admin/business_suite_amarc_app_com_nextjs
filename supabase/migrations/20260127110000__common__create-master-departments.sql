@@ -14,7 +14,7 @@ CREATE TABLE common.master_departments (
     -- leader_id uuid NOT NULL,
     sort_order integer NOT NULL UNIQUE DEFAULT 0,
     color_code text NOT NULL DEFAULT '#000000',
-    mailing_list text NOT NULL UNIQUE,
+    mailing_list text NULL,
     remarks text,
     valid_at timestamptz NOT NULL DEFAULT '2025-10-01T00:00:00Z',
     invalid_at timestamptz NOT NULL DEFAULT '2050-12-31T00:00:00Z',

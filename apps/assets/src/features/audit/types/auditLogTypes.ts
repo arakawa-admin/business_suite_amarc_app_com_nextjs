@@ -1,4 +1,4 @@
-export type AuditEntityType = "permit" | "reminder" | "comment";
+export type AuditEntityType = "permit" | "reminder" | "comment" | "vehicle" | "attachment";
 
 export type AuditLogListItem = {
     id: string;

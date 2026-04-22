@@ -3,7 +3,7 @@
 import {
     MasterDepartmentCreateInput,
     MasterDepartmentUpdatePayload,
-} from "@/schemas/common/masterDepartmentSchema";
+} from "../../../schemas/common/masterDepartmentSchema";
 import { subDays } from "date-fns";
 
 import { revalidatePath } from "next/cache";
@@ -15,7 +15,7 @@ import {
     insertMasterDepartment,
     updateMasterDepartmentById,
     updateMasterDepartmentInvalidAt,
-} from "@/lib/repositories/common/masterDepartment.repository";
+} from "../../repositories/common/masterDepartment.repository";
 
 export async function getMasterDepartments() {
     try {

@@ -6,6 +6,7 @@ import { Controller, useFormContext, get } from "react-hook-form";
 type Props = {
     name: string;
     label?: string;
+    placeholder?: string;
     sx?: object;
     required?: boolean;
     disabled?: boolean;
@@ -17,6 +18,7 @@ export default function TextInputField({
     name,
     label,
     sx,
+    placeholder,
     required = false,
     disabled = false,
     startAdornment,
@@ -46,6 +48,7 @@ export default function TextInputField({
                     <TextField
                         {...field}
                         label={label ? `${label}${required ? " (必須)" : ""}` : ""}
+                        placeholder={placeholder && `例) ${placeholder}`}
                         sx={sx}
                         error={!!fieldError}
                         helperText={(fieldError as any)?.message ?? ""}

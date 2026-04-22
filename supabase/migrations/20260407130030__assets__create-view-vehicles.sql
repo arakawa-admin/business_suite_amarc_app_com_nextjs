@@ -55,10 +55,10 @@ assets.v_vehicles_list
 【結合方針】
 - vehicles.department_id -> common.master_departments.id で部門名を取得する
 - vehicles.voluntary_insurance_agency_id
-    -> assets.master_vehicle_insurance_agencies.id
+    -> assets.master_insurance_agencies.id
   で任意保険契約先を取得する
 - 保険契約先から
-    assets.master_vehicle_insurance_categories
+    assets.master_insurance_categories
   を辿って保険カテゴリ情報を取得する
 
 【補足】
@@ -126,7 +126,7 @@ select
     ia.mobile_phone as voluntary_insurance_mobile_phone,
     ia.tel as voluntary_insurance_tel,
     ia.fax as voluntary_insurance_fax,
-    v.compulsory_insurance_agency_name,
+    -- v.compulsory_insurance_agency_name,
 
     ir.reminder_id as inspection_reminder_id,
     ir.due_on as inspection_expiry_on,
@@ -137,18 +137,17 @@ select
     vir.alert_on as voluntary_insurance_alert_on,
 
     v.note,
-    v.valid_at,
-    v.invalid_at,
     v.created_at,
     v.updated_at,
     v.created_by,
-    v.updated_by
+    v.updated_by,
+    v.deleted_at
 from assets.vehicles v
 left join common.master_departments d
     on d.id = v.department_id
-left join assets.master_vehicle_insurance_agencies ia
+left join assets.master_insurance_agencies ia
     on ia.id = v.voluntary_insurance_agency_id
-left join assets.master_vehicle_insurance_categories ic
+left join assets.master_insurance_categories ic
     on ic.id = ia.insurance_category_id
 left join inspection_reminders ir
     on ir.vehicle_id = v.id
@@ -190,10 +189,10 @@ assets.v_vehicle_reminders
 - reminders.target_id = vehicles.id で vehicles と結合する
 - vehicles.department_id -> common.master_departments.id で部門名を取得する
 - vehicles.voluntary_insurance_agency_id
-    -> assets.master_vehicle_insurance_agencies.id
+    -> assets.master_insurance_agencies.id
   で任意保険契約先を取得する
 - 保険契約先から
-    assets.master_vehicle_insurance_categories
+    assets.master_insurance_categories
   を辿って保険カテゴリ情報を取得する
 
 【用途】
@@ -213,9 +212,36 @@ assets.v_vehicle_reminders
   due_on / alert_on / completed_on をそのまま返す
 =========================================================
 */
+DROP view IF EXISTS assets.v_vehicle_reminders;
 create or replace view assets.v_vehicle_reminders as
+with reminder_comments as (
+    select
+        c.target_id as reminder_id,
+        count(*) as comment_count,
+        jsonb_agg(
+            jsonb_build_object(
+                'id', c.id,
+                'body', c.body,
+                'source_type', c.source_type,
+                'created_at', c.created_at,
+                'created_by', c.created_by,
+                'created_by_name', msc.name,
+                'updated_at', c.updated_at,
+                'updated_by', c.updated_by,
+                'updated_by_name', msu.name
+            )
+            order by c.created_at desc, c.id desc
+        ) as comments
+    from assets.comments c
+    left join common.master_staffs msc
+      on msc.id = c.created_by
+    left join common.master_staffs msu
+      on msu.id = c.updated_by
+    where c.target_type = 'reminder'
+    group by c.target_id
+)
 select
-    r.id as reminder_id,
+    r.id,
     r.target_type,
     r.target_id as vehicle_id,
     r.reminder_type_code,
@@ -250,21 +276,25 @@ select
     ia.mobile_phone as voluntary_insurance_mobile_phone,
     ia.tel as voluntary_insurance_tel,
     ia.fax as voluntary_insurance_fax,
-    v.compulsory_insurance_agency_name,
+    -- v.compulsory_insurance_agency_name,
     v.note as vehicle_note,
-    v.valid_at,
-    v.invalid_at,
     v.created_at as vehicle_created_at,
-    v.updated_at as vehicle_updated_at
+    v.updated_at as vehicle_updated_at,
+
+    coalesce(rc.comment_count, 0) as comment_count,
+    coalesce(rc.comments, '[]'::jsonb) as comments
+
 from assets.reminders r
 inner join assets.vehicles v
     on v.id = r.target_id
-   and r.target_type = 'vehicle'
+    and r.target_type = 'vehicle'
+left join reminder_comments rc
+    on rc.reminder_id = r.id
 left join common.master_departments d
     on d.id = v.department_id
-left join assets.master_vehicle_insurance_agencies ia
+left join assets.master_insurance_agencies ia
     on ia.id = v.voluntary_insurance_agency_id
-left join assets.master_vehicle_insurance_categories ic
+left join assets.master_insurance_categories ic
     on ic.id = ia.insurance_category_id
 where v.deleted_at is null;
 
